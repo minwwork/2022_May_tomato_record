@@ -1,10 +1,16 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:tomato_record/router/locations.dart';
+import 'package:tomato_record/screens/auth_screen.dart';
 import 'package:tomato_record/screens/splash_screen.dart';
 import 'package:tomato_record/utils/logger.dart';
 
-final _routerDelegate = BeamerDelegate(locationBuilder: BeamerLocationBuilder(beamLocations: [HomeLocation()]));
+final _routerDelegate = BeamerDelegate(
+    guards: [BeamGuard(pathBlueprints: ['/'], check: (context, location){
+      return false;
+    },
+        showPage: BeamPage(child: AuthScreen()))],
+    locationBuilder: BeamerLocationBuilder(beamLocations: [HomeLocation()]));
 
 void main(){
   logger.d('My first log by logger!!');
