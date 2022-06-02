@@ -13,25 +13,23 @@ class AddressService {
       'type' : 'ADDRESS',
       'category' : 'ROAD',
       'query' : text,
-      'size' : 20,
+      'size' : 30,
       };
 
     final response = await Dio()
-        .get('http://api.vworld.kr/req/search',
-        queryParameters: formData)
-        .catchError((e){
+        .get('http://api.vworld.kr/req/search', queryParameters: formData)
+        .catchError((e) {
       logger.e(e.message);
     });
 
     AddressModel addressModel =
-    AddressModel.fromJson(response.data["response"]);
+      AddressModel.fromJson(response.data["response"]);
     logger.d(addressModel);
     return addressModel;
   }
 
   Future<List<AddressModel2>> findAddressByCoordinate(
       {required double log, required double lat}) async {
-
     final List<Map<String, dynamic>> formDatas = <Map<String, dynamic>>[];
 
     formDatas.add( {
@@ -46,7 +44,7 @@ class AddressService {
       'service' : 'address',
       'request' : 'getAddress',
       'type' : 'PARCEL',
-      'point' : '${log-0.01},${lat}',
+      'point' : '${log-0.01},$lat',
     });
     formDatas.add( {
       'key' : VWORLD_KEY,

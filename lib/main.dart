@@ -20,6 +20,7 @@ final _routerDelegate = BeamerDelegate(
 
 void main(){
   logger.d('My first log by logger!!');
+  Provider.debugCheckInvalidValueType = null;
   runApp(MyApp());
 }
 
@@ -60,7 +61,9 @@ class TomatoApp extends StatelessWidget {
             fontFamily: 'Pretendard',
             hintColor: Colors.grey[350],
             textTheme: TextTheme(
-                button: TextStyle(color: Colors.white)
+                button: TextStyle(color: Colors.white),
+                subtitle1: TextStyle(color: Colors.black87, fontSize: 15),
+                subtitle2: TextStyle(color: Colors.grey, fontSize: 13),
             ),
             textButtonTheme: TextButtonThemeData(
                 style: TextButton.styleFrom(
@@ -72,7 +75,9 @@ class TomatoApp extends StatelessWidget {
                 backgroundColor: Colors.white,
                 elevation: 2,
                 titleTextStyle: TextStyle(color: Colors.black87),
-            actionsIconTheme: IconThemeData(color: Colors.black87))),
+            actionsIconTheme: IconThemeData(color: Colors.black87)),
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+            selectedItemColor: Colors.black87, unselectedItemColor: Colors.black54)),
         routeInformationParser: BeamerParser(),
         routerDelegate: _routerDelegate,
       ),

@@ -2,12 +2,18 @@
 /// result : [{"zipcode":"04524","type":"parcel","text":"서울특별시 중구 태평로1가 31","structure":{"level0":"대한민국","level1":"서울특별시","level2":"중구","level3":"","level4L":"태평로1가","level4LC":"1114010300","level4A":"명동","level4AC":"1114055000","level5":"31","detail":""}},{"zipcode":"04524","type":"road","text":"서울특별시 중구 태평로1가 세종대로 110 서울특별시 청사 신관","structure":{"level0":"대한민국","level1":"서울특별시","level2":"중구","level3":"태평로1가","level4L":"세종대로","level4LC":"2005001","level4A":"명동","level4AC":"1114055000","level5":"110","detail":"서울특별시 청사 신관"}}]
 
 class AddressModel2 {
+  Input? _input;
+  List<Result>? _result;
+
+  Input? get input => _input;
+  List<Result>? get result => _result;
+
   AddressModel2({
-      Input? input, 
-      List<Result>? result,}){
+    Input? input,
+    List<Result>? result}){
     _input = input;
     _result = result;
-}
+  }
 
   AddressModel2.fromJson(dynamic json) {
     _input = json['input'] != null ? Input.fromJson(json['input']) : null;
@@ -18,15 +24,6 @@ class AddressModel2 {
       });
     }
   }
-  Input? _input;
-  List<Result>? _result;
-AddressModel2 copyWith({  Input? input,
-  List<Result>? result,
-}) => AddressModel2(  input: input ?? _input,
-  result: result ?? _result,
-);
-  Input? get input => _input;
-  List<Result>? get result => _result;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -38,7 +35,6 @@ AddressModel2 copyWith({  Input? input,
     }
     return map;
   }
-
 }
 
 /// zipcode : "04524"
