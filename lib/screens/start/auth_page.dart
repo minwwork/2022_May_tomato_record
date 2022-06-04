@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tomato_record/constants/common_size.dart';
+import 'package:tomato_record/constants/shared_pref_keys.dart';
 import 'package:tomato_record/states/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:tomato_record/utils/logger.dart';
@@ -250,10 +251,18 @@ class _AuthPageState extends State<AuthPage> {
 
   _getAddress() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String address = prefs.getString('address')?? "";
-    logger.d("Address from shared pref - $address");
+    String address = prefs.getString(SHARED_ADDRESS)?? "";
+    double lat = prefs.getDouble(SHARED_LAT) ?? 0;
+    double lon = prefs.getDouble(SHARED_LON) ?? 0;
+
   }
 }
 
 
-enum VerificationStatus{ none, codeSending, codeSent, verifying, verificationDone }
+enum VerificationStatus{
+  none,
+  codeSending,
+  codeSent,
+  verifying,
+  verificationDone
+}
