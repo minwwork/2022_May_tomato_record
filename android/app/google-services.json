@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "767492370561",
+    "project_id": "tomato-record-58ccc",
+    "storage_bucket": "tomato-record-58ccc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:767492370561:android:a7028ff4b948b1019c9d80",
+        "android_client_info": {
+          "package_name": "com.teamconnect.practice.tomatorecord.tomato_record"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "767492370561-bck9ni47ei3ri3b6jpgeg6u3f6ok4h7q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.teamconnect.practice.tomatorecord.tomato_record",
+            "certificate_hash": "2704e401c9b6b0621ed063c1d79ea2bb78cdc130"
+          }
+        },
+        {
+          "client_id": "767492370561-i5noumf1b6egnjm4prh2m09bkh1skevj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdp7C5M2WfyAK2qtCcxiFMQXWTJx0cl0c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "767492370561-i5noumf1b6egnjm4prh2m09bkh1skevj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

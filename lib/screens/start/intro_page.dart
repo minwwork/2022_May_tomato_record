@@ -13,10 +13,8 @@ class IntroPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    logger.d('current user state: ${context.read<UserProvider>().userState}');
     return LayoutBuilder(
       builder: (context, constraints){
-
         Size size = MediaQuery.of(context).size;
 
         final imgSize = size.width-32;

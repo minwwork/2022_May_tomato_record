@@ -1,13 +1,22 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
+import 'package:tomato_record/utils/logger.dart';
+
 
 class UserProvider extends ChangeNotifier{
-  bool _userLoggedIn = true;
+  UserProvider(){
+    initUser();
+  }
+  User? _user;
 
-  void setUserAuth(bool authState){
-   _userLoggedIn = authState;
-   notifyListeners();
+  void initUser(){
+    FirebaseAuth.instance.authStateChanges().listen((user) {
+      _user = user;
+      logger.d('user status - $user');
+      notifyListeners();
+    });
   }
 
-  bool get userState => _userLoggedIn;
+  User? get user => _user;
 
 }
