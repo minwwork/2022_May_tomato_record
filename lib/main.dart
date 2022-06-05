@@ -15,9 +15,10 @@ final _routerDelegate = BeamerDelegate(
       return context.watch<UserProvider>().user != null;
     },
         showPage: BeamPage(
-            child: StartScreen()))],
+            child: StartScreen()))
+    ],
     locationBuilder: BeamerLocationBuilder(
-        beamLocations: [HomeLocation()]));
+        beamLocations: [HomeLocation(), InputLocation()]));
 
 void main(){
   logger.d('My first log by logger!!');
@@ -84,6 +85,7 @@ class TomatoApp extends StatelessWidget {
                 )),
             appBarTheme: AppBarTheme(
                 backgroundColor: Colors.white,
+                foregroundColor: Colors.black87,
                 elevation: 2,
                 titleTextStyle: TextStyle(color: Colors.black87),
             actionsIconTheme: IconThemeData(color: Colors.black87)),
