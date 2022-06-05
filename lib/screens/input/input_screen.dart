@@ -1,6 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:tomato_record/constants/common_size.dart';
 import 'package:tomato_record/screens/input/multi_image_select.dart';
 
@@ -14,6 +15,11 @@ class InputScreen extends StatefulWidget {
 class _InputScreenState extends State<InputScreen> {
 
   bool _suggestPriceSelected = false;
+
+  TextEditingController _priceController = TextEditingController();
+
+  var _border = UnderlineInputBorder(
+      borderSide : BorderSide(color: Colors.transparent));
 
   var _divider = Divider(
     height: 1,
@@ -61,10 +67,9 @@ class _InputScreenState extends State<InputScreen> {
                 hintText: '글 제목',
                 contentPadding:
                   EdgeInsets.symmetric(horizontal: common_padding),
-                border: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.transparent)),
-                enabledBorder : UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.transparent))),
+                border: _border,
+                focusedBorder: _border,
+                enabledBorder : _border),
           ),
           _divider,
           ListTile(
@@ -80,20 +85,31 @@ class _InputScreenState extends State<InputScreen> {
                     padding: const EdgeInsets.only(left: common_padding),
                     child: TextFormField(
                       keyboardType: TextInputType.number,
+                      controller:  _priceController,
+                      onChanged: (value){
+                        if(value == '0원') {
+                          _priceController.clear();
+                        }
+                        setState((){
+                        });
+                      },
+                      inputFormatters: [
+                        MoneyInputFormatter(
+                            mantissaLength: 0, trailingSymbol: '원')
+                      ],
                       decoration: InputDecoration(
                     hintText: '얼마에 파시겠어요?',
                     prefixIcon: ImageIcon(ExtendedAssetImageProvider('assets/imgs/won.png'),
-                        color: Colors.grey[350],
+                        color: (_priceController.text.isEmpty)
+                            ?Colors.grey[350]
+                            :Colors.black87,
                     ),
                     prefixIconConstraints: BoxConstraints(maxWidth:20),
                     contentPadding:
                     EdgeInsets.symmetric(vertical: common_sm_padding),
-                          border: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent)),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent)),
-                    enabledBorder : UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent))),),
+                          border: _border,
+                    focusedBorder: _border,
+                    enabledBorder : _border),),
                   )),
               TextButton.icon(
                 onPressed: (){
@@ -102,8 +118,12 @@ class _InputScreenState extends State<InputScreen> {
                   });
                 },
                 icon: Icon(
-                  Icons.check_circle_outline,
-                  color: _suggestPriceSelected?Theme.of(context).primaryColor:Colors.black54,
+                  _suggestPriceSelected
+                    ?Icons.check_circle
+                    :Icons.check_circle_outline,
+                  color: _suggestPriceSelected
+                      ?Theme.of(context).primaryColor
+                      :Colors.black54,
                 ),
                 label : Text('가격제안 받기',
                     style: TextStyle(
@@ -115,7 +135,19 @@ class _InputScreenState extends State<InputScreen> {
                     primary: Colors.black45),
               )
             ],
-          )
+          ),
+          _divider,
+          TextFormField(
+            maxLines: null,
+            keyboardType: TextInputType.multiline,
+            decoration: InputDecoration(
+                hintText: '당신 근처에 올릴 게시글 내용을 작성해주세요.\n가품 및 판매금지 품목은 게시가 제한될 수 있어요.',
+                contentPadding:
+                EdgeInsets.symmetric(horizontal: common_padding),
+                border: _border,
+                focusedBorder: _border,
+                enabledBorder : _border),
+          ),
         ],
       ),
     );
