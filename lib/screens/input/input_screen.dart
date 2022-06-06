@@ -104,7 +104,7 @@ class _InputScreenState extends State<InputScreen> {
                           Theme.of(context).appBarTheme.backgroundColor),
                   child: Text(
                     '뒤로',
-                    style: Theme.of(context).textTheme.bodyText2,
+                    style: Theme.of(context).textTheme.bodyText1,
                   )),
               centerTitle: true,
               bottom: PreferredSize(
@@ -128,7 +128,7 @@ class _InputScreenState extends State<InputScreen> {
                             Theme.of(context).appBarTheme.backgroundColor),
                     child: Text(
                       '완료',
-                      style: Theme.of(context).textTheme.bodyText2,
+                      style: Theme.of(context).textTheme.bodyText1,
                     )),
               ],
             ),
