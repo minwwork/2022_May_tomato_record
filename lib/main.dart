@@ -9,51 +9,54 @@ import 'package:tomato_record/states/user_notifier.dart';
 import 'package:tomato_record/utils/logger.dart';
 
 final _routerDelegate = BeamerDelegate(
-    guards: [BeamGuard(
-        pathBlueprints: ['/'],
-        check: (context, location){
-      return context.watch<UserNotifier>().user != null;
-    },
-        showPage: BeamPage(
-            child: StartScreen()))
+    guards: [
+      BeamGuard(
+          pathBlueprints: [
+            ...HomeLocation().pathBlueprints,
+            ...InputLocation().pathBlueprints,
+            ...ItemLocation().pathBlueprints
+          ],
+          check: (context, location) {
+            return context.watch<UserNotifier>().user != null;
+          },
+          showPage: BeamPage(child: StartScreen()))
     ],
     locationBuilder: BeamerLocationBuilder(
-        beamLocations: [HomeLocation(), InputLocation()]));
+        beamLocations: [HomeLocation(), InputLocation(), ItemLocation()]));
 
-void main(){
+void main() {
   logger.d('My first log by logger!!');
   Provider.debugCheckInvalidValueType = null;
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
-class MyApp extends StatefulWidget{
+class MyApp extends StatefulWidget {
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _initialization,
-      builder: (context, snapshot) {
-        return AnimatedSwitcher(
-            duration: Duration(milliseconds: 300),
-            child: _splashLoadingWidget(snapshot));
-      });
+        future: _initialization,
+        builder: (context, snapshot) {
+          return AnimatedSwitcher(
+              duration: Duration(milliseconds: 300),
+              child: _splashLoadingWidget(snapshot));
+        });
   }
 
   StatelessWidget _splashLoadingWidget(AsyncSnapshot<Object?> snapshot) {
-    if(snapshot.hasError){
+    if (snapshot.hasError) {
       print('error occur while loading.');
       return Text('Error occur');
-    }else if(snapshot.connectionState == ConnectionState.done){
+    } else if (snapshot.connectionState == ConnectionState.done) {
       return TomatoApp();
-    }else{
+    } else {
       return SplashScreen();
     }
   }
@@ -67,40 +70,39 @@ class TomatoApp extends StatelessWidget {
     return ChangeNotifierProvider<UserNotifier>(
       create: (BuildContext context) {
         return UserNotifier();
-        },
+      },
       child: MaterialApp.router(
-        theme: ThemeData(primarySwatch: Colors.red,
+        theme: ThemeData(
+            primarySwatch: Colors.red,
             fontFamily: 'Pretendard',
             hintColor: Colors.grey[350],
             textTheme: TextTheme(
-                button: TextStyle(color: Colors.white),
-                subtitle1: TextStyle(color: Colors.black87, fontSize: 15),
-                subtitle2: TextStyle(color: Colors.grey, fontSize: 13),
-                bodyText2: TextStyle(
-                    color: Colors.black87,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w300),
+              button: TextStyle(color: Colors.white),
+              subtitle1: TextStyle(color: Colors.black87, fontSize: 15),
+              subtitle2: TextStyle(color: Colors.grey, fontSize: 13),
+              bodyText2: TextStyle(
+                  color: Colors.black87,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w300),
             ),
             inputDecorationTheme: InputDecorationTheme(),
             textButtonTheme: TextButtonThemeData(
                 style: TextButton.styleFrom(
                     backgroundColor: Colors.red,
                     primary: Colors.white,
-                    minimumSize: Size(48, 48)
-                )),
+                    minimumSize: Size(48, 48))),
             appBarTheme: AppBarTheme(
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black87,
                 elevation: 2,
                 titleTextStyle: TextStyle(color: Colors.black87),
-            actionsIconTheme: IconThemeData(color: Colors.black87)),
-        bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            selectedItemColor: Colors.black87, unselectedItemColor: Colors.black54)),
+                actionsIconTheme: IconThemeData(color: Colors.black87)),
+            bottomNavigationBarTheme: BottomNavigationBarThemeData(
+                selectedItemColor: Colors.black87,
+                unselectedItemColor: Colors.black54)),
         routeInformationParser: BeamerParser(),
         routerDelegate: _routerDelegate,
       ),
     );
   }
 }
-
-
