@@ -5,9 +5,9 @@ import 'package:tomato_record/utils/logger.dart';
 
 class ImageStorage {
   static Future<List<String>> uploadImages(
-      List<Uint8List> images,) async {
-    if (FirebaseAuth.instance.currentUser == null)
-      return [];
+      List<Uint8List> images,
+      String itemKey
+      ) async {
 
     String userKey = FirebaseAuth.instance.currentUser!.uid;
     String timeInMilli = DateTime
@@ -21,7 +21,7 @@ class ImageStorage {
 
       for (int i = 0; i < images.length; i++) {
         Reference ref = FirebaseStorage.instance
-            .ref('/images/${userKey}_$timeInMilli/$i.jpg');
+            .ref('/images/$itemKey/$i.jpg');
         if (images.isNotEmpty) {
           await ref.putData(images[i], metaData).catchError((onError){
       logger.e(onError.toString());

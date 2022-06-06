@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:beamer/beamer.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
@@ -8,9 +9,11 @@ import 'package:provider/provider.dart';
 import 'package:tomato_record/constants/common_size.dart';
 import 'package:tomato_record/data/item_model.dart';
 import 'package:tomato_record/repo/image_storage.dart';
+import 'package:tomato_record/repo/item_service.dart';
 import 'package:tomato_record/screens/input/multi_image_select.dart';
 import 'package:tomato_record/states/category_notifier.dart';
 import 'package:tomato_record/states/select_image_notifier.dart';
+import 'package:tomato_record/states/user_notifier.dart';
 import 'package:tomato_record/utils/logger.dart';
 
 class InputScreen extends StatefulWidget {
@@ -21,13 +24,12 @@ class InputScreen extends StatefulWidget {
 }
 
 class _InputScreenState extends State<InputScreen> {
-
   bool _suggestPriceSelected = false;
 
   TextEditingController _priceController = TextEditingController();
 
-  var _border = UnderlineInputBorder(
-      borderSide : BorderSide(color: Colors.transparent));
+  var _border =
+      UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent));
 
   var _divider = Divider(
     height: 1,
@@ -38,6 +40,54 @@ class _InputScreenState extends State<InputScreen> {
   );
 
   bool isCreatingItem = false;
+
+  TextEditingController _titleController = TextEditingController();
+  TextEditingController _detailController = TextEditingController();
+
+  void attemptCreateItem() async {
+    if (FirebaseAuth.instance.currentUser == null) return;
+    isCreatingItem = true;
+    setState(() {});
+
+    final String userKey = FirebaseAuth.instance.currentUser!.uid;
+    final String itemKey = ItemModel.generateItemKey(userKey);
+
+    List<Uint8List> images = context.read<SelectImageNotifier>().images;
+
+    UserNotifier userNotifier = context.read<UserNotifier>();
+
+    if (userNotifier.userModel == null) return;
+
+    List<String> downloadUrls =
+        await ImageStorage.uploadImages(images, itemKey);
+
+    final num? price = num.tryParse(_priceController.text.replaceAll('.', '').replaceAll('원', ''));
+
+    ItemModel itemModel = ItemModel(
+      itemKey: itemKey,
+      userKey: userKey,
+      itemDownloadUrls: downloadUrls,
+      title: _titleController.text,
+      category: context.read<CategoryNotifier>().currentCategoryInEng,
+      price: price??0,
+      negotiable: _suggestPriceSelected,
+      detail: _detailController.text,
+      address: userNotifier.userModel!.address,
+      geoFirePoint: userNotifier.userModel!.geoFirePoint,
+      createdData: DateTime.now().toUtc(),
+    );
+
+
+    logger.d('upload finished - ${downloadUrls.toString()}');
+
+    await ItemService().createNewItem(itemModel.toJson(), itemKey);
+
+    isCreatingItem = false;
+    setState(() {});
+
+    context.beamBack();
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -47,12 +97,14 @@ class _InputScreenState extends State<InputScreen> {
           ignoring: isCreatingItem,
           child: Scaffold(
             appBar: AppBar(
-              leading: TextButton(onPressed:(){
-                context.beamBack();
-              },
+              leading: TextButton(
+                  onPressed: () {
+                    context.beamBack();
+                  },
                   style: TextButton.styleFrom(
                       primary: Colors.black87,
-                      backgroundColor: Theme.of(context).appBarTheme.backgroundColor),
+                      backgroundColor:
+                          Theme.of(context).appBarTheme.backgroundColor),
                   child: Text(
                     '뒤로',
                     style: Theme.of(context).textTheme.bodyText2,
@@ -61,59 +113,50 @@ class _InputScreenState extends State<InputScreen> {
               bottom: PreferredSize(
                 preferredSize: Size(_size.width, 2),
                 child: isCreatingItem
-                    ?LinearProgressIndicator(minHeight: 2,)
-                    :Container(),),
-              title: Text('중고거래 글쓰기', style: Theme.of(context).textTheme.headline6,
+                    ? LinearProgressIndicator(
+                        minHeight: 2,
+                      )
+                    : Container(),
+              ),
+              title: Text(
+                '중고거래 글쓰기',
+                style: Theme.of(context).textTheme.headline6,
               ),
               actions: [
                 TextButton(
-                    onPressed:() async {
-                      isCreatingItem = true;
-                      setState((){
-
-                      });
-                      List<Uint8List> images =
-                          context.read<SelectImageNotifier>().images;
-                      List<String> downloadUrls = await ImageStorage.uploadImages(images);
-                      // ItemModel itemModel = ItemModel(itemKey: itemKey, userKey: userKey, itemDownloadUrls: itemDownloadUrls, title: title, category: category, price: price, negotiable: negotiable, detail: detail, address: address, geoFirePoint: geoFirePoint, createdData: createdData)
-                      logger.d('upload finished - ${downloadUrls.toString()}');
-
-                      isCreatingItem = false;
-                      setState((){
-
-                      });
-                    },
+                    onPressed: attemptCreateItem,
                     style: TextButton.styleFrom(
                         primary: Colors.black87,
-                        backgroundColor: Theme.of(context).appBarTheme.backgroundColor),
+                        backgroundColor:
+                            Theme.of(context).appBarTheme.backgroundColor),
                     child: Text(
                       '완료',
                       style: Theme.of(context).textTheme.bodyText2,
                     )),
               ],
-
             ),
-
             body: ListView(
               children: [
                 MultiImageSelect(),
                 _divider,
                 TextFormField(
+                  controller: _titleController,
                   decoration: InputDecoration(
                       hintText: '글 제목',
                       contentPadding:
-                      EdgeInsets.symmetric(horizontal: common_padding),
+                          EdgeInsets.symmetric(horizontal: common_padding),
                       border: _border,
                       focusedBorder: _border,
-                      enabledBorder : _border),
+                      enabledBorder: _border),
                 ),
                 _divider,
                 ListTile(
-                  onTap: (){
+                  onTap: () {
                     context.beamToNamed('/input/category_input');
                   },
                   dense: true,
-                  title: Text(context.watch<CategoryNotifier>().currentCategoryInKor),
+                  title: Text(
+                      context.watch<CategoryNotifier>().currentCategoryInKor),
                   trailing: Icon(Icons.navigate_next),
                 ),
                 _divider,
@@ -121,54 +164,55 @@ class _InputScreenState extends State<InputScreen> {
                   children: [
                     Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.only(left: common_padding),
-                          child: TextFormField(
-                            keyboardType: TextInputType.number,
-                            controller:  _priceController,
-                            onChanged: (value){
-                              if(value == '0원') {
-                                _priceController.clear();
-                              }
-                              setState((){
-                              });
-                            },
-                            inputFormatters: [
-                              MoneyInputFormatter(
-                                  mantissaLength: 0, trailingSymbol: '원')
-                            ],
-                            decoration: InputDecoration(
-                                hintText: '얼마에 파시겠어요?',
-                                prefixIcon: ImageIcon(ExtendedAssetImageProvider('assets/imgs/won.png'),
-                                  color: (_priceController.text.isEmpty)
-                                      ?Colors.grey[350]
-                                      :Colors.black87,
-                                ),
-                                prefixIconConstraints: BoxConstraints(maxWidth:20),
-                                contentPadding:
-                                EdgeInsets.symmetric(vertical: common_sm_padding),
-                                border: _border,
-                                focusedBorder: _border,
-                                enabledBorder : _border),),
-                        )),
+                      padding: const EdgeInsets.only(left: common_padding),
+                      child: TextFormField(
+                        keyboardType: TextInputType.number,
+                        controller: _priceController,
+                        onChanged: (value) {
+                          if (value == '0원') {
+                            _priceController.clear();
+                          }
+                          setState(() {});
+                        },
+                        inputFormatters: [
+                          MoneyInputFormatter(
+                              mantissaLength: 0, trailingSymbol: '원')
+                        ],
+                        decoration: InputDecoration(
+                            hintText: '얼마에 파시겠어요?',
+                            prefixIcon: ImageIcon(
+                              ExtendedAssetImageProvider('assets/imgs/won.png'),
+                              color: (_priceController.text.isEmpty)
+                                  ? Colors.grey[350]
+                                  : Colors.black87,
+                            ),
+                            prefixIconConstraints: BoxConstraints(maxWidth: 20),
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: common_sm_padding),
+                            border: _border,
+                            focusedBorder: _border,
+                            enabledBorder: _border),
+                      ),
+                    )),
                     TextButton.icon(
-                      onPressed: (){
-                        setState((){
+                      onPressed: () {
+                        setState(() {
                           _suggestPriceSelected = !_suggestPriceSelected;
                         });
                       },
                       icon: Icon(
                         _suggestPriceSelected
-                            ?Icons.check_circle
-                            :Icons.check_circle_outline,
+                            ? Icons.check_circle
+                            : Icons.check_circle_outline,
                         color: _suggestPriceSelected
-                            ?Theme.of(context).primaryColor
-                            :Colors.black54,
+                            ? Theme.of(context).primaryColor
+                            : Colors.black54,
                       ),
-                      label : Text('가격제안 받기',
+                      label: Text('가격제안 받기',
                           style: TextStyle(
                               color: _suggestPriceSelected
-                                  ?Theme.of(context).primaryColor
-                                  :Colors.black54)),
+                                  ? Theme.of(context).primaryColor
+                                  : Colors.black54)),
                       style: TextButton.styleFrom(
                           backgroundColor: Colors.transparent,
                           primary: Colors.black45),
@@ -180,20 +224,19 @@ class _InputScreenState extends State<InputScreen> {
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
                   decoration: InputDecoration(
-                      hintText: '당신 근처에 올릴 게시글 내용을 작성해주세요.\n가품 및 판매금지 품목은 게시가 제한될 수 있어요.',
+                      hintText:
+                          '당신 근처에 올릴 게시글 내용을 작성해주세요.\n가품 및 판매금지 품목은 게시가 제한될 수 있어요.',
                       contentPadding:
-                      EdgeInsets.symmetric(horizontal: common_padding),
+                          EdgeInsets.symmetric(horizontal: common_padding),
                       border: _border,
                       focusedBorder: _border,
-                      enabledBorder : _border),
+                      enabledBorder: _border),
                 ),
               ],
             ),
           ),
         );
       },
-
     );
   }
 }
-

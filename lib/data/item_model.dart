@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 
 class ItemModel {
@@ -63,6 +64,14 @@ class ItemModel {
    map['geoFirePoint'] = geoFirePoint.data;
    map['createdData'] = createdData;
    return map;
+ }
+
+ static String generateItemKey(String uid){
+   String timeInMilli = DateTime
+       .now()
+       .millisecondsSinceEpoch
+       .toString();
+   return '${uid}_$timeInMilli';
  }
 
 }
