@@ -8,8 +8,8 @@ import 'package:tomato_record/repo/user_service.dart';
 import 'package:tomato_record/utils/logger.dart';
 
 
-class UserProvider extends ChangeNotifier{
-  UserProvider(){
+class UserNotifier extends ChangeNotifier{
+  UserNotifier(){
     initUser();
   }
   User? _user;

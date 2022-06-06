@@ -1,4 +1,7 @@
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tomato_record/states/category_notifier.dart';
 
 class CategoryInputScreen extends StatelessWidget {
   const CategoryInputScreen({Key? key}) : super(key: key);
@@ -15,7 +18,20 @@ class CategoryInputScreen extends StatelessWidget {
         body: ListView.separated(
           itemBuilder: (context, index){
             return ListTile(
-              title: Text(categoriesKor[index]),
+              onTap: () {context.read<CategoryNotifier>().
+              setNewCategoryWithKor(categoriesMapEngToKor.values.elementAt(index));
+                Beamer.of(context).beamBack();
+                },
+              title: Text(
+                categoriesMapEngToKor.values.elementAt(index),
+              style: TextStyle(
+                  color: context
+                      .read<CategoryNotifier>()
+                      .currentCategoryInKor==
+                      categoriesMapEngToKor.values.elementAt(index)
+                      ?Theme.of(context).primaryColor
+                      :Colors.black87),
+              ),
             );
           },
           separatorBuilder: (context, index){
@@ -24,18 +40,12 @@ class CategoryInputScreen extends StatelessWidget {
               thickness: 1,
               color: Colors.grey[300],);
           },
-          itemCount: categoriesKor.length)
+          itemCount: categoriesMapEngToKor.length)
     );
   }
 }
 
-const List<String> categoriesKor = [
-  '선택',
-  '가구',
-  '전자기기',
-  '유아동',
-  '스포츠',
-  '여성',
-  '남성',
-  '메이크업',
-];
+
+
+
+
