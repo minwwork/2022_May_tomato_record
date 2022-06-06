@@ -1,10 +1,11 @@
 
 import 'dart:typed_data';
-
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:tomato_record/constants/common_size.dart';
+import 'package:tomato_record/states/select_image_notifier.dart';
 
 class MultiImageSelect extends StatefulWidget {
   const MultiImageSelect({
@@ -16,7 +17,6 @@ class MultiImageSelect extends StatefulWidget {
 }
 
 class _MultiImageSelectState extends State<MultiImageSelect> {
-  List<Uint8List> _images = [];
   bool _isPickingImage = false;
 
   @override
@@ -24,6 +24,8 @@ class _MultiImageSelectState extends State<MultiImageSelect> {
 
     return LayoutBuilder(
       builder: (context, constraints){
+        SelectImageNotifier selectImageNotifier = context
+          .watch<SelectImageNotifier>();
         Size _size = MediaQuery.of(context).size;
         var imageSize = (_size.width / 3) - common_padding *2;
         var imageCorner = 16.0;
@@ -38,21 +40,17 @@ class _MultiImageSelectState extends State<MultiImageSelect> {
                 child: InkWell(
                   onTap: () async {
                     _isPickingImage = true;
-                    setState((){
-
-                    });
+                    setState(() {});
                     final ImagePicker _picker = ImagePicker();
-                    final List<XFile>? images = await _picker.pickMultiImage(imageQuality: 10);
+                    final List<XFile>? images =
+                      await _picker.pickMultiImage(imageQuality: 10);
                     if(images != null && images.isNotEmpty){
-                      _images.clear();
-                      images.forEach((xfile) async {
-                        _images.add(await xfile.readAsBytes());
-                      });
+                      await context
+                          .read<SelectImageNotifier>()
+                          .setNewImages(images);
                     }
                     _isPickingImage = false;
-                    setState((){
-
-                    });
+                    setState(() {});
                   },
                   child: Container(
                     child: _isPickingImage?Padding(
@@ -79,7 +77,7 @@ class _MultiImageSelectState extends State<MultiImageSelect> {
                 ),
               ),
               ...List.generate(
-              _images.length,
+                  selectImageNotifier.images.length,
               (index) => Stack(
                 children: [
                   Padding(
@@ -88,7 +86,7 @@ class _MultiImageSelectState extends State<MultiImageSelect> {
                       top: common_padding,
                       bottom: common_padding),
                     child: ExtendedImage.memory(
-                      _images[index],
+                      selectImageNotifier.images[index],
                       width: imageSize,
                       height: imageSize,
                       fit: BoxFit.cover,
@@ -120,10 +118,7 @@ class _MultiImageSelectState extends State<MultiImageSelect> {
                   child: IconButton(
                     padding: EdgeInsets.all(8),
                     onPressed: (){
-                      _images.removeAt(index);
-                      setState ((){
-
-                      });
+                      selectImageNotifier.removeImage(index);
                     },
                     icon: Icon(Icons.remove_circle),
                     color: Colors.black54,
