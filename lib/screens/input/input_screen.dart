@@ -61,7 +61,8 @@ class _InputScreenState extends State<InputScreen> {
     List<String> downloadUrls =
         await ImageStorage.uploadImages(images, itemKey);
 
-    final num? price = num.tryParse(_priceController.text.replaceAll('.', '').replaceAll('원', ''));
+    final num? price =
+        num.tryParse(_priceController.text.replaceAll(new RegExp(r"\D"), ''));
 
     ItemModel itemModel = ItemModel(
       itemKey: itemKey,
@@ -69,7 +70,7 @@ class _InputScreenState extends State<InputScreen> {
       itemDownloadUrls: downloadUrls,
       title: _titleController.text,
       category: context.read<CategoryNotifier>().currentCategoryInEng,
-      price: price??0,
+      price: price ?? 0,
       negotiable: _suggestPriceSelected,
       detail: _detailController.text,
       address: userNotifier.userModel!.address,
@@ -77,10 +78,10 @@ class _InputScreenState extends State<InputScreen> {
       createdData: DateTime.now().toUtc(),
     );
 
-
     logger.d('upload finished - ${downloadUrls.toString()}');
 
-    await ItemService().createNewItem(itemModel.toJson(), itemKey);
+    await ItemService()
+        .createNewItem(itemModel, itemKey, userNotifier.user!.uid);
 
     context.beamBack();
   }
@@ -149,7 +150,8 @@ class _InputScreenState extends State<InputScreen> {
                 _divider,
                 ListTile(
                   onTap: () {
-                    context.beamToNamed('/$LOCATION_INPUT/$LOCATION_CATEGORY_INPUT');
+                    context.beamToNamed(
+                        '/$LOCATION_INPUT/$LOCATION_CATEGORY_INPUT');
                   },
                   dense: true,
                   title: Text(
