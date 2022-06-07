@@ -52,4 +52,24 @@ class ItemService {
     }
     return items;
   }
+
+  Future<List<ItemModel>> getUserItems(String userKey,
+      {String? itemKey}) async {
+    CollectionReference<Map<String, dynamic>> collectionReference =
+        FirebaseFirestore.instance
+            .collection(COL_USERS)
+            .doc(userKey)
+            .collection(COL_USER_ITEMS);
+    QuerySnapshot<Map<String, dynamic>> snapshots =
+        await collectionReference.get();
+
+    List<ItemModel> items = [];
+
+    for (int i = 0; i < snapshots.size; i++) {
+      ItemModel itemModel = ItemModel.fromQuerySnapshot(snapshots.docs[i]);
+      if (!(itemKey != null && itemKey == itemModel.itemKey))
+        items.add(itemModel);
+    }
+    return items;
+  }
 }
