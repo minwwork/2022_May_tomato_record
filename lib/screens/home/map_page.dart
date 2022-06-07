@@ -1,3 +1,4 @@
+import 'package:beamer/beamer.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:latlng/latlng.dart';
@@ -5,6 +6,7 @@ import 'package:map/map.dart';
 import 'package:tomato_record/data/item_model.dart';
 import 'package:tomato_record/data/user_model.dart';
 import 'package:tomato_record/repo/item_service.dart';
+import 'package:tomato_record/router/locations.dart';
 
 class MapPage extends StatefulWidget {
   final UserModel _userModel;
@@ -50,6 +52,24 @@ class _MapPageState extends State<MapPage> {
         ));
   }
 
+  Widget _buildItemWidget(Offset offset, ItemModel itemModel) {
+    return Positioned(
+        left: offset.dx,
+        top: offset.dy,
+        width: 24,
+        height: 24,
+        child: InkWell(
+          onTap: () {
+            context.beamToNamed('/$LOCATION_ITEM/${itemModel.itemKey}');
+          },
+          child: ExtendedImage.network(
+            itemModel.itemDownloadUrls[0],
+            fit: BoxFit.cover,
+            shape: BoxShape.circle,
+          ),
+        ));
+  }
+
   @override
   void initState() {
     controller = MapController(
@@ -85,7 +105,7 @@ class _MapPageState extends State<MapPage> {
                 snapshot.data!.forEach((item) {
                   final offset = transformer.fromLatLngToXYCoords(LatLng(
                       item.geoFirePoint.latitude, item.geoFirePoint.longitude));
-                  nearByItems.add(_buildMarkerwidget(offset));
+                  nearByItems.add(_buildItemWidget(offset, item));
                 });
               }
 

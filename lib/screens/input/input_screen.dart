@@ -75,7 +75,7 @@ class _InputScreenState extends State<InputScreen> {
       detail: _detailController.text,
       address: userNotifier.userModel!.address,
       geoFirePoint: userNotifier.userModel!.geoFirePoint,
-      createdData: DateTime.now().toUtc(),
+      createdDate: DateTime.now().toUtc(),
     );
 
     logger.d('upload finished - ${downloadUrls.toString()}');

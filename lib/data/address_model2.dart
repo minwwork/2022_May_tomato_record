@@ -1,5 +1,5 @@
 /// input : {"point":{"x":"126.978275264","y":"37.566642192"},"crs":"epsg:4326","type":"both"}
-/// result : [{"zipcode":"04524","type":"parcel","text":"서울특별시 중구 태평로1가 31","structure":{"level0":"대한민국","level1":"서울특별시","level2":"중구","level3":"","level4L":"태평로1가","level4LC":"1114010300","level4A":"명동","level4AC":"1114055000","level5":"31","detail":""}},{"zipcode":"04524","type":"road","text":"서울특별시 중구 태평로1가 세종대로 110 서울특별시 청사 신관","structure":{"level0":"대한민국","level1":"서울특별시","level2":"중구","level3":"태평로1가","level4L":"세종대로","level4LC":"2005001","level4A":"명동","level4AC":"1114055000","level5":"110","detail":"서울특별시 청사 신관"}}]
+/// result : [{"zipcode":"04524","type":"parcel","text":"서울특별시 중구 태평로1가 31","structure":{"level0":"대한민국","level1":"서울특별시","level2":"중구","level3":"","level4L":"태평로1가","level4LC":"1114010300","level4A":"명동","level4AC":"1114055000","level5":"31",DOC_DETAIL:""}},{"zipcode":"04524","type":"road","text":"서울특별시 중구 태평로1가 세종대로 110 서울특별시 청사 신관","structure":{"level0":"대한민국","level1":"서울특별시","level2":"중구","level3":"태평로1가","level4L":"세종대로","level4LC":"2005001","level4A":"명동","level4AC":"1114055000","level5":"110",DOC_DETAIL:"서울특별시 청사 신관"}}]
 
 class AddressModel2 {
   Input? _input;
@@ -40,7 +40,7 @@ class AddressModel2 {
 /// zipcode : "04524"
 /// type : "parcel"
 /// text : "서울특별시 중구 태평로1가 31"
-/// structure : {"level0":"대한민국","level1":"서울특별시","level2":"중구","level3":"","level4L":"태평로1가","level4LC":"1114010300","level4A":"명동","level4AC":"1114055000","level5":"31","detail":""}
+/// structure : {"level0":"대한민국","level1":"서울특별시","level2":"중구","level3":"","level4L":"태평로1가","level4LC":"1114010300","level4A":"명동","level4AC":"1114055000","level5":"31",DOC_DETAIL:""}
 
 class Result {
   Result({

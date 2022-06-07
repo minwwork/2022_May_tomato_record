@@ -157,7 +157,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                           decoration: TextDecoration.underline),
                                 ),
                                 Text(
-                                  'ㆍ${TimeCalculation.getTimeDiff(itemModel.createdData)}',
+                                  'ㆍ${TimeCalculation.getTimeDiff(itemModel.createdDate)}',
                                   style: Theme.of(context).textTheme.bodyText2,
                                 ),
                               ],

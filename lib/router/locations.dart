@@ -68,5 +68,5 @@ class ItemLocation extends BeamLocation {
   }
 
   @override
-  List get pathBlueprints => ['/$LOCATION_ITEM/:$LOCATION_ITEM_ID'];
+  List get pathBlueprints => ['/$LOCATION_ITEM/$LOCATION_ITEM_ID'];
 }

@@ -81,7 +81,7 @@ class ItemService {
 
     GeoFirePoint center = GeoFirePoint(latlng.latitude, latlng.longitude);
     double radius = 2;
-    var field = 'geoFirePoint';
+    var field = DOC_GEOFIREPOINT;
 
     List<ItemModel> items = [];
     List<DocumentSnapshot<Map<String, dynamic>>> snapshots = await geo

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:tomato_record/constants/data_keys.dart';
 
 class ItemModel {
   late String itemKey;
@@ -13,8 +14,8 @@ class ItemModel {
   late String detail;
   late String address;
   late GeoFirePoint geoFirePoint;
-  late DateTime createdData;
-  late DocumentReference? reference;
+  late DateTime createdDate;
+  DocumentReference? reference;
 
   ItemModel({
     required this.itemKey,
@@ -27,28 +28,28 @@ class ItemModel {
     required this.detail,
     required this.address,
     required this.geoFirePoint,
-    required this.createdData,
+    required this.createdDate,
     this.reference,
   });
 
   ItemModel.fromJson(Map<String, dynamic> json, this.itemKey, this.reference) {
-    userKey = json['userKey'] ?? "";
-    itemDownloadUrls = json['itemDownloadUrls'] != null
-        ? json['itemDownloadUrls'].cast<String>()
+    userKey = json[DOC_USERKEY] ?? "";
+    itemDownloadUrls = json[DOC_ITEMDOWNLOADURLS] != null
+        ? json[DOC_ITEMDOWNLOADURLS].cast<String>()
         : [];
-    title = json['title'] ?? "";
-    category = json['category'] ?? "none";
-    price = json['price'] ?? 0;
-    negotiable = json['negotiable'] ?? false;
-    detail = json['detail'] ?? "";
-    address = json['address'] ?? "";
-    geoFirePoint = json['geoFirePoing'] == null
+    title = json[DOC_TITLE] ?? "";
+    category = json[DOC_CATEGORY] ?? "none";
+    price = json[DOC_PRICE] ?? 0;
+    negotiable = json[DOC_NEGOTIABLE] ?? false;
+    detail = json[DOC_DETAIL] ?? "";
+    address = json[DOC_ADDRESS] ?? "";
+    geoFirePoint = json[DOC_GEOFIREPOINT] == null
         ? GeoFirePoint(0, 0)
-        : GeoFirePoint((json['geoFirePoint']['geopoint']).latitude,
-            (json['geoFirePoint']['geopoint']).longitude);
-    createdData = json['createdDate'] == null
+        : GeoFirePoint((json[DOC_GEOFIREPOINT]['geopoint']).latitude,
+            (json[DOC_GEOFIREPOINT]['geopoint']).longitude);
+    createdDate = json[DOC_CREATEDDATE] == null
         ? DateTime.now().toUtc()
-        : (json['createdData'] as Timestamp).toDate();
+        : (json[DOC_CREATEDDATE] as Timestamp).toDate();
   }
 
   ItemModel.fromQuerySnapshot(
@@ -60,24 +61,24 @@ class ItemModel {
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
-    map['userKey'] = userKey;
-    map['itemDownloadUrls'] = itemDownloadUrls;
-    map['title'] = title;
-    map['category'] = category;
-    map['price'] = price;
-    map['negotiable'] = negotiable;
-    map['detail'] = detail;
-    map['address'] = address;
-    map['geoFirePoint'] = geoFirePoint.data;
-    map['createdData'] = createdData;
+    map[DOC_USERKEY] = userKey;
+    map[DOC_ITEMDOWNLOADURLS] = itemDownloadUrls;
+    map[DOC_TITLE] = title;
+    map[DOC_CATEGORY] = category;
+    map[DOC_PRICE] = price;
+    map[DOC_NEGOTIABLE] = negotiable;
+    map[DOC_DETAIL] = detail;
+    map[DOC_ADDRESS] = address;
+    map[DOC_GEOFIREPOINT] = geoFirePoint.data;
+    map[DOC_CREATEDDATE] = createdDate;
     return map;
   }
 
   Map<String, dynamic> toMinJson() {
     final map = <String, dynamic>{};
-    map['itemDownloadUrls'] = itemDownloadUrls.sublist(0, 1);
-    map['title'] = title;
-    map['price'] = price;
+    map[DOC_ITEMDOWNLOADURLS] = itemDownloadUrls.sublist(0, 1);
+    map[DOC_TITLE] = title;
+    map[DOC_PRICE] = price;
     return map;
   }
 

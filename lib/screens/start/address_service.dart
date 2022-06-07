@@ -10,7 +10,7 @@ class AddressService {
     final formData = {
       'key' : VWORLD_KEY,
       'request' : 'search',
-      'type' : 'ADDRESS',
+      'type' : 'address',
       'category' : 'ROAD',
       'query' : text,
       'size' : 30,

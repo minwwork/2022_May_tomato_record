@@ -1,5 +1,5 @@
 /// page : {"total":"1","current":"1","size":"10"}
-/// result : {"crs":"EPSG:900913","type":"address","items":[{"id":"4113510900106240000","address":{"zipcode":"13487","category":"road","road":"경기도 성남시 분당구 판교로 242 (삼평동)","parcel":"삼평동 624","bldnm":"","bldnmdc":""},"point":{"x":"14148853.48172358","y":"4495338.919111188"}}]}
+/// result : {"crs":"EPSG:900913","type":DOC_ADDRESS,"items":[{"id":"4113510900106240000",DOC_ADDRESS:{"zipcode":"13487",DOC_CATEGORY:"road","road":"경기도 성남시 분당구 판교로 242 (삼평동)","parcel":"삼평동 624","bldnm":"","bldnmdc":""},"point":{"x":"14148853.48172358","y":"4495338.919111188"}}]}
 
 class AddressModel {
   AddressModel({
@@ -37,8 +37,8 @@ class AddressModel {
 }
 
 /// crs : "EPSG:900913"
-/// type : "address"
-/// items : [{"id":"4113510900106240000","address":{"zipcode":"13487","category":"road","road":"경기도 성남시 분당구 판교로 242 (삼평동)","parcel":"삼평동 624","bldnm":"","bldnmdc":""},"point":{"x":"14148853.48172358","y":"4495338.919111188"}}]
+/// type : DOC_ADDRESS
+/// items : [{"id":"4113510900106240000",DOC_ADDRESS:{"zipcode":"13487",DOC_CATEGORY:"road","road":"경기도 성남시 분당구 판교로 242 (삼평동)","parcel":"삼평동 624","bldnm":"","bldnmdc":""},"point":{"x":"14148853.48172358","y":"4495338.919111188"}}]
 
 class Result {
   Result({
@@ -87,7 +87,7 @@ class Result {
 }
 
 /// id : "4113510900106240000"
-/// address : {"zipcode":"13487","category":"road","road":"경기도 성남시 분당구 판교로 242 (삼평동)","parcel":"삼평동 624","bldnm":"","bldnmdc":""}
+/// address : {"zipcode":"13487",DOC_CATEGORY:"road","road":"경기도 성남시 분당구 판교로 242 (삼평동)","parcel":"삼평동 624","bldnm":"","bldnmdc":""}
 /// point : {"x":"14148853.48172358","y":"4495338.919111188"}
 
 class Items {
@@ -102,7 +102,7 @@ class Items {
 
   Items.fromJson(dynamic json) {
     _id = json['id'];
-    _address = json['address'] != null ? Address.fromJson(json['address']) : null;
+    _address = json[DOC_ADDRESS] != null ? Address.fromJson(json[DOC_ADDRESS]) : null;
     _point = json['point'] != null ? Point.fromJson(json['point']) : null;
   }
   String? _id;
@@ -123,7 +123,7 @@ class Items {
     final map = <String, dynamic>{};
     map['id'] = _id;
     if (_address != null) {
-      map['address'] = _address?.toJson();
+      map[DOC_ADDRESS] = _address?.toJson();
     }
     if (_point != null) {
       map['point'] = _point?.toJson();
@@ -192,7 +192,7 @@ class Address {
 
   Address.fromJson(dynamic json) {
     _zipcode = json['zipcode'];
-    _category = json['category'];
+    _category = json[DOC_CATEGORY];
     _road = json['road'];
     _parcel = json['parcel'];
     _bldnm = json['bldnm'];
@@ -227,7 +227,7 @@ class Address {
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['zipcode'] = _zipcode;
-    map['category'] = _category;
+    map[DOC_CATEGORY] = _category;
     map['road'] = _road;
     map['parcel'] = _parcel;
     map['bldnm'] = _bldnm;
