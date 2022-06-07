@@ -17,7 +17,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   int _bottomSeletedIndex = 0;
 
   @override
@@ -27,49 +26,50 @@ class _HomeScreenState extends State<HomeScreen> {
         index: _bottomSeletedIndex,
         children: [
           ItemsPage(),
-          MapPage(),
-          Container(color: Colors.accents[6],
+          (context.read<UserNotifier>().userModel == null)
+              ? Container()
+              : MapPage(context.read<UserNotifier>().userModel!),
+          Container(
+            color: Colors.accents[6],
           ),
-          Container(color: Colors.accents[9],
+          Container(
+            color: Colors.accents[9],
           ),
         ],
       ),
-
       floatingActionButton: ExpandableFab(
-          distance: 90,
-          children: [
-            MaterialButton(
-                onPressed: () {
-                  context.beamToNamed('/$LOCATION_INPUT');
-                },
-                shape: CircleBorder(),
-                height: 40,
-                color: Theme.of(context).colorScheme.primary,
-                child: Icon(Icons.add)
-            ),
-            MaterialButton(
-                onPressed: () {},
-                shape: CircleBorder(),
-                height: 40,
-                color: Theme.of(context).colorScheme.primary,
-                child: Icon(Icons.add)
-            ),
-          ],
-        ),
-
+        distance: 90,
+        children: [
+          MaterialButton(
+              onPressed: () {
+                context.beamToNamed('/$LOCATION_INPUT');
+              },
+              shape: CircleBorder(),
+              height: 40,
+              color: Theme.of(context).colorScheme.primary,
+              child: Icon(Icons.add)),
+          MaterialButton(
+              onPressed: () {},
+              shape: CircleBorder(),
+              height: 40,
+              color: Theme.of(context).colorScheme.primary,
+              child: Icon(Icons.add)),
+        ],
+      ),
       appBar: AppBar(
         centerTitle: false,
-        title: Text('초월읍',
+        title: Text(
+          '초월읍',
           style: Theme.of(context).appBarTheme.titleTextStyle,
         ),
         actions: [
           IconButton(
-              onPressed: (){
+              onPressed: () {
                 FirebaseAuth.instance.signOut();
               },
               icon: Icon(CupertinoIcons.list_bullet)),
-          IconButton(onPressed: (){}, icon: Icon(CupertinoIcons.search)),
-          IconButton(onPressed: (){}, icon: Icon(CupertinoIcons.bell))
+          IconButton(onPressed: () {}, icon: Icon(CupertinoIcons.search)),
+          IconButton(onPressed: () {}, icon: Icon(CupertinoIcons.bell))
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -77,26 +77,27 @@ class _HomeScreenState extends State<HomeScreen> {
         type: BottomNavigationBarType.fixed,
         items: [
           BottomNavigationBarItem(
-              icon: ImageIcon(AssetImage(_bottomSeletedIndex==0
-                  ?'assets/imgs/selected_home.png' :'assets/imgs/home.png')),
+              icon: ImageIcon(AssetImage(_bottomSeletedIndex == 0
+                  ? 'assets/imgs/selected_home.png'
+                  : 'assets/imgs/home.png')),
               label: '홈'),
           BottomNavigationBarItem(
-              icon: ImageIcon(AssetImage(_bottomSeletedIndex==1
-                  ?'assets/imgs/selected_location.png'
-                  :'assets/imgs/location.png')),
+              icon: ImageIcon(AssetImage(_bottomSeletedIndex == 1
+                  ? 'assets/imgs/selected_location.png'
+                  : 'assets/imgs/location.png')),
               label: '내 근처'),
           BottomNavigationBarItem(
-              icon: ImageIcon(AssetImage(_bottomSeletedIndex==2
-                  ?'assets/imgs/selected_chat.png'
-                  :'assets/imgs/chat.png')),
+              icon: ImageIcon(AssetImage(_bottomSeletedIndex == 2
+                  ? 'assets/imgs/selected_chat.png'
+                  : 'assets/imgs/chat.png')),
               label: '채팅'),
           BottomNavigationBarItem(
-              icon: ImageIcon(AssetImage(_bottomSeletedIndex==3
-                  ?'assets/imgs/selected_user.png'
-                  :'assets/imgs/user.png')),
+              icon: ImageIcon(AssetImage(_bottomSeletedIndex == 3
+                  ? 'assets/imgs/selected_user.png'
+                  : 'assets/imgs/user.png')),
               label: '내정보'),
         ],
-        onTap: (index){
+        onTap: (index) {
           setState(() {
             _bottomSeletedIndex = index;
           });
