@@ -11,16 +11,16 @@ class ItemService {
 
   ItemService.internal();
 
-  Future createNewItem(
-      ItemModel itemModel, String itemKey, String userKey) async {
+  Future createNewItem(ItemModel itemModel, String itemKey,
+      String userKey) async {
     DocumentReference<Map<String, dynamic>> itemDocReference =
-        FirebaseFirestore.instance.collection(COL_ITEMS).doc(itemKey);
+    FirebaseFirestore.instance.collection(COL_ITEMS).doc(itemKey);
     DocumentReference<Map<String, dynamic>> userItemsDocReference =
-        FirebaseFirestore.instance
-            .collection(COL_USERS)
-            .doc(userKey)
-            .collection(COL_USER_ITEMS)
-            .doc(itemKey);
+    FirebaseFirestore.instance
+        .collection(COL_USERS)
+        .doc(userKey)
+        .collection(COL_USER_ITEMS)
+        .doc(itemKey);
     final DocumentSnapshot documentSnapshot = await itemDocReference.get();
 
     if (documentSnapshot.exists) {
@@ -33,18 +33,18 @@ class ItemService {
 
   Future<ItemModel> getItemModel(String itemKey) async {
     DocumentReference<Map<String, dynamic>> documentReference =
-        FirebaseFirestore.instance.collection(COL_ITEMS).doc(itemKey);
+    FirebaseFirestore.instance.collection(COL_ITEMS).doc(itemKey);
     final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
-        await documentReference.get();
+    await documentReference.get();
     ItemModel itemModel = ItemModel.fromSnapshot(documentSnapshot);
     return itemModel;
   }
 
   Future<List<ItemModel>> getItems() async {
     CollectionReference<Map<String, dynamic>> collectionReference =
-        FirebaseFirestore.instance.collection(COL_ITEMS);
+    FirebaseFirestore.instance.collection(COL_ITEMS);
     QuerySnapshot<Map<String, dynamic>> snapshots =
-        await collectionReference.get();
+    await collectionReference.get();
 
     List<ItemModel> items = [];
 
@@ -58,12 +58,12 @@ class ItemService {
   Future<List<ItemModel>> getUserItems(String userKey,
       {String? itemKey}) async {
     CollectionReference<Map<String, dynamic>> collectionReference =
-        FirebaseFirestore.instance
-            .collection(COL_USERS)
-            .doc(userKey)
-            .collection(COL_USER_ITEMS);
+    FirebaseFirestore.instance
+        .collection(COL_USERS)
+        .doc(userKey)
+        .collection(COL_USER_ITEMS);
     QuerySnapshot<Map<String, dynamic>> snapshots =
-        await collectionReference.get();
+    await collectionReference.get();
 
     List<ItemModel> items = [];
 
@@ -94,7 +94,6 @@ class ItemService {
       //todo: remove my own item
       items.add(itemModel);
     }
-
     return items;
   }
 }

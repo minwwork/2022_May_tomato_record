@@ -1,10 +1,14 @@
+import 'package:beamer/beamer.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:tomato_record/constants/common_size.dart';
+import 'package:tomato_record/data/chatroom_model.dart';
 import 'package:tomato_record/data/item_model.dart';
 import 'package:tomato_record/data/user_model.dart';
+import 'package:tomato_record/repo/chat_service.dart';
 import 'package:tomato_record/repo/item_service.dart';
+import 'package:tomato_record/router/locations.dart';
 import 'package:tomato_record/screens/item/similar_item.dart';
 import 'package:tomato_record/states/category_notifier.dart';
 import 'package:tomato_record/states/user_notifier.dart';
@@ -62,6 +66,32 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
     super.dispose();
   }
 
+  void _goToChatroom(ItemModel itemModel, UserModel userModel) async {
+    String chatroomKey = ChatroomModel.generateChatRoomKey(
+        userModel.userKey, widget.itemKey);
+
+    ChatroomModel _chatroomModel = ChatroomModel(
+        lastMsgTime: DateTime.now(),
+        itemImage: itemModel.itemDownloadUrls[0],
+        itemTitle: itemModel.title,
+        itemKey: widget.itemKey,
+        itemAddress: itemModel.address,
+        itemPrice: itemModel.price,
+        sellerKey: itemModel.userKey,
+        buyerKey: userModel.userKey,
+        sellerImage:
+        "https://minimaltoolkit.com/images/randomdata/male/101.jpg",
+        buyerImage:
+        "https://minimaltoolkit.com/images/randomdata/female/41.jpg",
+        geoFirePoint: itemModel.geoFirePoint,
+        chatroomKey: chatroomKey);
+
+    await ChatService().createNewChatroom(_chatroomModel);
+
+    context.beamToNamed('/$LOCATION_ITEM/${widget.itemKey}/:$chatroomKey');
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<ItemModel>(
@@ -69,11 +99,18 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           ItemModel itemModel = snapshot.data!;
-          UserModel userModel = context.read<UserNotifier>().userModel!;
+          UserModel userModel = context
+              .read<UserNotifier>()
+              .userModel!;
           return LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
-              _size = MediaQuery.of(context).size;
-              _statusBarHeight = MediaQuery.of(context).padding.top;
+              _size = MediaQuery
+                  .of(context)
+                  .size;
+              _statusBarHeight = MediaQuery
+                  .of(context)
+                  .padding
+                  .top;
               return Stack(
                 fit: StackFit.expand,
                 children: [
@@ -105,18 +142,24 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                               ),
                               Column(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                                MainAxisAlignment.spaceEvenly,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     '4,000원',
                                     style:
-                                        Theme.of(context).textTheme.bodyText1,
+                                    Theme
+                                        .of(context)
+                                        .textTheme
+                                        .bodyText1,
                                   ),
                                   Text(
                                     '가격제안불가',
                                     style:
-                                        Theme.of(context).textTheme.bodyText2,
+                                    Theme
+                                        .of(context)
+                                        .textTheme
+                                        .bodyText2,
                                   ),
                                 ],
                               ),
@@ -124,7 +167,9 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                 child: Container(),
                               ),
                               TextButton(
-                                  onPressed: () {}, child: Text('채팅으로 거래하기'))
+                                  onPressed: () {
+                                    _goToChatroom(itemModel, userModel);
+                                  }, child: Text('채팅으로 거래하기'))
                             ],
                           ),
                         ),
@@ -138,60 +183,75 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                           padding: EdgeInsets.all(common_padding),
                           sliver: SliverList(
                               delegate: SliverChildListDelegate([
-                            _userSection(userModel),
-                            _divider,
-                            Text(
-                              itemModel.title,
-                              style: Theme.of(context).textTheme.headline6,
-                            ),
-                            _textGap,
-                            Row(
-                              children: [
+                                _userSection(userModel),
+                                _divider,
                                 Text(
-                                  categoriesMapEngToKor[itemModel.category] ??
-                                      "선택",
-                                  style: Theme.of(context)
+                                  itemModel.title,
+                                  style: Theme
+                                      .of(context)
                                       .textTheme
-                                      .bodyText2!
-                                      .copyWith(
+                                      .headline6,
+                                ),
+                                _textGap,
+                                Row(
+                                  children: [
+                                    Text(
+                                      categoriesMapEngToKor[itemModel
+                                          .category] ??
+                                          "선택",
+                                      style: Theme
+                                          .of(context)
+                                          .textTheme
+                                          .bodyText2!
+                                          .copyWith(
                                           decoration: TextDecoration.underline),
+                                    ),
+                                    Text(
+                                      'ㆍ${TimeCalculation.getTimeDiff(
+                                          itemModel.createdDate)}',
+                                      style: Theme
+                                          .of(context)
+                                          .textTheme
+                                          .bodyText2,
+                                    ),
+                                  ],
                                 ),
+                                _textGap,
                                 Text(
-                                  'ㆍ${TimeCalculation.getTimeDiff(itemModel.createdDate)}',
-                                  style: Theme.of(context).textTheme.bodyText2,
+                                  itemModel.detail,
+                                  style: Theme
+                                      .of(context)
+                                      .textTheme
+                                      .bodyText1,
                                 ),
-                              ],
-                            ),
-                            _textGap,
-                            Text(
-                              itemModel.detail,
-                              style: Theme.of(context).textTheme.bodyText1,
-                            ),
-                            _textGap,
-                            Text(
-                              '조회 33',
-                              style: Theme.of(context).textTheme.bodyText2,
-                            ), //조회부분은 인스타 강의에 수록, 건너뜀
-                            _textGap,
-                            Divider(
-                              height: 2,
-                              thickness: 2,
-                              color: Colors.grey[200],
-                            ),
-                            MaterialButton(
-                                padding: EdgeInsets.zero,
-                                onPressed: () {},
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                      '이 게시글 신고하기'), //flutter_email_sender 5.1.0 활용가능
-                                )),
-                            Divider(
-                              height: 2,
-                              thickness: 2,
-                              color: Colors.grey[200],
-                            ),
-                          ])),
+                                _textGap,
+                                Text(
+                                  '조회 33',
+                                  style: Theme
+                                      .of(context)
+                                      .textTheme
+                                      .bodyText2,
+                                ), //조회부분은 인스타 강의에 수록, 건너뜀
+                                _textGap,
+                                Divider(
+                                  height: 2,
+                                  thickness: 2,
+                                  color: Colors.grey[200],
+                                ),
+                                MaterialButton(
+                                    padding: EdgeInsets.zero,
+                                    onPressed: () {},
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                          '이 게시글 신고하기'), //flutter_email_sender 5.1.0 활용가능
+                                    )),
+                                Divider(
+                                  height: 2,
+                                  thickness: 2,
+                                  color: Colors.grey[200],
+                                ),
+                              ])),
                         ),
                         SliverToBoxAdapter(
                           child: Padding(
@@ -202,7 +262,10 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                               children: [
                                 Text(
                                   '무무님의 판매상품',
-                                  style: Theme.of(context).textTheme.bodyText1,
+                                  style: Theme
+                                      .of(context)
+                                      .textTheme
+                                      .bodyText1,
                                 ),
                                 SizedBox(
                                   width: _size!.width / 4,
@@ -213,7 +276,8 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                       alignment: Alignment.centerRight,
                                       child: Text(
                                         '더보기',
-                                        style: Theme.of(context)
+                                        style: Theme
+                                            .of(context)
                                             .textTheme
                                             .button!
                                             .copyWith(color: Colors.grey),
@@ -245,7 +309,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                     childAspectRatio: 6 / 7,
                                     children: List.generate(
                                         snapshot.data!.length,
-                                        (index) =>
+                                            (index) =>
                                             SimilarItem(snapshot.data![index])),
                                   ),
                                 );
@@ -269,12 +333,12 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [
-                            Colors.black12,
-                            Colors.black12,
-                            Colors.black12,
-                            Colors.black12,
-                            Colors.transparent
-                          ])),
+                                Colors.black12,
+                                Colors.black12,
+                                Colors.black12,
+                                Colors.black12,
+                                Colors.transparent
+                              ])),
                     ),
                   ),
                   Positioned(
@@ -290,7 +354,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                             : Colors.transparent,
                         shadowColor: Colors.transparent,
                         foregroundColor:
-                            isAppbarCollapsed ? Colors.black87 : Colors.white,
+                        isAppbarCollapsed ? Colors.black87 : Colors.white,
                       ),
                     ),
                   )
@@ -359,11 +423,17 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
             children: [
               Text(
                 userModel.phoneNumber.substring(9), //+82101111111
-                style: Theme.of(context).textTheme.bodyText1,
+                style: Theme
+                    .of(context)
+                    .textTheme
+                    .bodyText1,
               ),
               Text(
                 userModel.address,
-                style: Theme.of(context).textTheme.bodyText2,
+                style: Theme
+                    .of(context)
+                    .textTheme
+                    .bodyText2,
               ),
             ],
           ),
@@ -416,7 +486,8 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
             ),
             Text(
               '매너온도',
-              style: Theme.of(context)
+              style: Theme
+                  .of(context)
                   .textTheme
                   .bodyText2!
                   .copyWith(decoration: TextDecoration.underline),
