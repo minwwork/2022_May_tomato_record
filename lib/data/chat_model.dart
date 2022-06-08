@@ -23,7 +23,9 @@ class ChatModel {
 
   ChatModel.fromJson(Map<String, dynamic> json, this.chatKey, this.reference) {
     msg = json[DOC_MSG]??"";
-    createdDate = json[DOC_CREATEDDATE]??DateTime.now();
+    createdDate = json[DOC_CREATEDDATE] == null
+        ? DateTime.now().toUtc()
+        : (json[DOC_CREATEDDATE] as Timestamp).toDate();
     userKey = json[DOC_USERKEY]??"";
   }
 
