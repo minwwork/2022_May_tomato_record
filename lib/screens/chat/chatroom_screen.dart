@@ -1,6 +1,11 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tomato_record/data/chat_model.dart';
+import 'package:tomato_record/data/user_model.dart';
+import 'package:tomato_record/repo/chat_service.dart';
 import 'package:tomato_record/screens/chat/chat.dart';
+import 'package:tomato_record/states/user_notifier.dart';
 
 class ChatroomScreen extends StatefulWidget {
   final String chatroomKey;
@@ -12,11 +17,14 @@ class ChatroomScreen extends StatefulWidget {
 }
 
 class _ChatroomScreenState extends State<ChatroomScreen> {
+  TextEditingController _textEditingController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         Size _size = MediaQuery.of(context).size;
+        UserModel userModel = context.read<UserNotifier>().userModel!;
         return Scaffold(
           appBar: AppBar(),
           backgroundColor: Colors.grey[200],
@@ -114,7 +122,7 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
                       },
                       itemCount: 30),
                 )),
-                _buildInputBar()
+                _buildInputBar(userModel)
               ],
             ),
           ),
@@ -123,7 +131,7 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
     );
   }
 
-  Widget _buildInputBar() {
+  Widget _buildInputBar(UserModel userModel) {
     return SizedBox(
       height: 48,
       child: Row(
@@ -136,6 +144,7 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
               )),
           Expanded(
               child: TextFormField(
+            controller: _textEditingController,
             decoration: InputDecoration(
                 hintText: '메세지를 입력하세요.',
                 isDense: true,
@@ -156,7 +165,19 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
                     borderSide: BorderSide(color: Colors.grey))),
           )),
           IconButton(
-              onPressed: () {}, icon: Icon(Icons.send, color: Colors.grey))
+              onPressed: () async {
+                ChatModel chatModel = ChatModel(
+                    userKey: userModel.userKey,
+                    msg: _textEditingController.text,
+                    createdDate: DateTime.now());
+
+               await ChatService().createNewChat(widget.chatroomKey, chatModel);
+
+                print('${_textEditingController.text}');
+
+                _textEditingController.clear();
+              },
+              icon: Icon(Icons.send, color: Colors.grey))
         ],
       ),
     );
