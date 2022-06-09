@@ -9,34 +9,56 @@ import 'package:tomato_record/repo/item_service.dart';
 import 'package:tomato_record/repo/user_service.dart';
 import 'package:tomato_record/router/locations.dart';
 
-class ItemsPage extends StatelessWidget {
+class ItemsPage extends StatefulWidget {
   const ItemsPage({Key? key}) : super(key: key);
+
+  @override
+  State<ItemsPage> createState() => _ItemsPageState();
+}
+
+class _ItemsPageState extends State<ItemsPage> {
+  final List<ItemModel> _items = [];
+
+  bool init = false;
+
+  @override
+  void initState() {
+    if(!init) {
+      _onRefresh();
+      super.initState();
+      init = true;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder: (context, contraints){
+      builder: (context, contraints) {
         Size size = MediaQuery.of(context).size;
         final imgSize = size.width / 4;
 
-        return FutureBuilder<List<ItemModel>>(
-          future: ItemService().getItems(),
-          builder: (context, snapshot) {
-            return AnimatedSwitcher(
-                duration: Duration(milliseconds: 300),
-                child: (snapshot.hasData && snapshot.data!.isNotEmpty )
-                    ?_listView(imgSize, snapshot.data!)
-                    :_shimmerListView(imgSize));
-          });
+        return AnimatedSwitcher(
+            duration: Duration(milliseconds: 300),
+            child: (_items.isNotEmpty)
+                ? _listView(imgSize)
+                : _shimmerListView(imgSize));
         // return _listView(imgSize);
       },
     );
   }
 
-  ListView _listView(double imgSize, List<ItemModel> items) {
-    return ListView.separated(
+  Future _onRefresh() async {
+    _items.clear();
+    _items.addAll(await ItemService().getItems());
+    setState(() {});
+  }
+
+  Widget _listView(double imgSize) {
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      child: ListView.separated(
         padding: EdgeInsets.all(common_padding),
-        separatorBuilder: (context, index){
+        separatorBuilder: (context, index) {
           return Divider(
             height: common_padding * 2 + 1,
             thickness: 1,
@@ -45,10 +67,10 @@ class ItemsPage extends StatelessWidget {
             endIndent: common_sm_padding,
           );
         },
-        itemBuilder: (context, index){
-          ItemModel item = items[index];
+        itemBuilder: (context, index) {
+          ItemModel item = _items[index];
           return InkWell(
-            onTap: (){
+            onTap: () {
               context.beamToNamed('/$LOCATION_ITEM/:${item.itemKey}');
             },
             child: SizedBox(
@@ -69,132 +91,152 @@ class ItemsPage extends StatelessWidget {
                   ),
                   Expanded(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.title,
+                        style: Theme.of(context).textTheme.subtitle1,
+                      ),
+                      Text(
+                        '53일전',
+                        style: Theme.of(context).textTheme.subtitle2,
+                      ),
+                      Text('${item.price.toString()}원'),
+                      Expanded(
+                        child: Container(),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text(
-                            item.title,
-                            style: Theme.of(context).textTheme.subtitle1,),
-                          Text(
-                            '53일전',
-                            style: Theme.of(context).textTheme.subtitle2,),
-                          Text('${item.price.toString()}원'),
-                          Expanded(
-                            child: Container(),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              SizedBox(
-                                height: 14,
-                                child: FittedBox(
-                                  fit: BoxFit.fitHeight,
-                                  child: Row(
-                                    children: [
-                                      Icon(CupertinoIcons.chat_bubble_2, color: Colors.grey,),
-                                      Text('23', style: TextStyle(color: Colors.grey),),
-                                      Icon(CupertinoIcons.heart, color: Colors.grey,),
-                                      Text('30', style: TextStyle(color: Colors.grey),),
-                                    ],
+                          SizedBox(
+                            height: 14,
+                            child: FittedBox(
+                              fit: BoxFit.fitHeight,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    CupertinoIcons.chat_bubble_2,
+                                    color: Colors.grey,
                                   ),
-                                ),
+                                  Text(
+                                    '23',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                  Icon(
+                                    CupertinoIcons.heart,
+                                    color: Colors.grey,
+                                  ),
+                                  Text(
+                                    '30',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                ],
                               ),
-                            ],
-                          )
+                            ),
+                          ),
                         ],
-                      ))
+                      )
+                    ],
+                  ))
                 ],
               ),
             ),
           );
         },
-        itemCount: items.length,
-      );
+        itemCount: _items.length,
+      ),
+    );
   }
 
   Widget _shimmerListView(double imgSize) {
     return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
-      enabled: true,
-
-    child: ListView.separated(
-        padding: EdgeInsets.all(common_padding),
-        separatorBuilder: (context, index){
-          return Divider(
-            height: common_padding * 2 + 1,
-            thickness: 1,
-            color: Colors.grey[200],
-            indent: common_sm_padding,
-            endIndent: common_sm_padding,
-          );
-        },
-        itemBuilder: (context, index){
-          return SizedBox(
-            height: imgSize,
-            child: Row(
-              children: [
-                Container(
-                    height: imgSize,
-                    width: imgSize,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),)
-                ),
-                SizedBox(
-                  width: common_padding,
-                ),
-                Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                            height: 14, width: 150,
-                        decoration: BoxDecoration(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
+        enabled: true,
+        child: ListView.separated(
+          padding: EdgeInsets.all(common_padding),
+          separatorBuilder: (context, index) {
+            return Divider(
+              height: common_padding * 2 + 1,
+              thickness: 1,
+              color: Colors.grey[200],
+              indent: common_sm_padding,
+              endIndent: common_sm_padding,
+            );
+          },
+          itemBuilder: (context, index) {
+            return SizedBox(
+              height: imgSize,
+              child: Row(
+                children: [
+                  Container(
+                      height: imgSize,
+                      width: imgSize,
+                      decoration: BoxDecoration(
                         shape: BoxShape.rectangle,
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(3),)
-                        ),
-                        SizedBox(height: 4,),
-                        Container(
-                            height: 12, width: 180,
-                        decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(3),)
-                        ),
-                        SizedBox(height: 4,),
-                        Container(
-                            height: 14, width: 100,
-                        decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(3),)
-                        ),
-                        Expanded(
-                          child: Container(),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
+                        borderRadius: BorderRadius.circular(12),
+                      )),
+                  SizedBox(
+                    width: common_padding,
+                  ),
+                  Expanded(
+                      child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                          height: 14,
+                          width: 150,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(3),
+                          )),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      Container(
+                          height: 12,
+                          width: 180,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(3),
+                          )),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      Container(
+                          height: 14,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(3),
+                          )),
+                      Expanded(
+                        child: Container(),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(
                               height: 14,
                               width: 80,
-                                decoration: BoxDecoration(
+                              decoration: BoxDecoration(
                                 shape: BoxShape.rectangle,
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(3),
-                              )
-                                ),
-                          ],
-                        )
+                              )),
+                        ],
+                      )
                     ],
-                ))
-              ],
-            ),
-          );
-        },
-        itemCount: 10,
-      ));
+                  ))
+                ],
+              ),
+            );
+          },
+          itemCount: 10,
+        ));
   }
 }
