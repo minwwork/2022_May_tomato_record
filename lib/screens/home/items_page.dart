@@ -8,9 +8,11 @@ import 'package:tomato_record/data/item_model.dart';
 import 'package:tomato_record/repo/item_service.dart';
 import 'package:tomato_record/repo/user_service.dart';
 import 'package:tomato_record/router/locations.dart';
+import 'package:tomato_record/widgets/item_list_widget.dart';
 
 class ItemsPage extends StatefulWidget {
-  const ItemsPage({Key? key}) : super(key: key);
+  final String userKey;
+  const ItemsPage({Key? key, required this.userKey}) : super(key: key);
 
   @override
   State<ItemsPage> createState() => _ItemsPageState();
@@ -69,79 +71,7 @@ class _ItemsPageState extends State<ItemsPage> {
         },
         itemBuilder: (context, index) {
           ItemModel item = _items[index];
-          return InkWell(
-            onTap: () {
-              context.beamToNamed('/$LOCATION_ITEM/:${item.itemKey}');
-            },
-            child: SizedBox(
-              height: imgSize,
-              child: Row(
-                children: [
-                  SizedBox(
-                      height: imgSize,
-                      width: imgSize,
-                      child: ExtendedImage.network(
-                        item.itemDownloadUrls[0],
-                        fit: BoxFit.cover,
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(12),
-                      )),
-                  SizedBox(
-                    width: common_padding,
-                  ),
-                  Expanded(
-                      child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.title,
-                        style: Theme.of(context).textTheme.subtitle1,
-                      ),
-                      Text(
-                        '53일전',
-                        style: Theme.of(context).textTheme.subtitle2,
-                      ),
-                      Text('${item.price.toString()}원'),
-                      Expanded(
-                        child: Container(),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          SizedBox(
-                            height: 14,
-                            child: FittedBox(
-                              fit: BoxFit.fitHeight,
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    CupertinoIcons.chat_bubble_2,
-                                    color: Colors.grey,
-                                  ),
-                                  Text(
-                                    '23',
-                                    style: TextStyle(color: Colors.grey),
-                                  ),
-                                  Icon(
-                                    CupertinoIcons.heart,
-                                    color: Colors.grey,
-                                  ),
-                                  Text(
-                                    '30',
-                                    style: TextStyle(color: Colors.grey),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ))
-                ],
-              ),
-            ),
-          );
+          return ItemListWidget(item, imgSize:imgSize);
         },
         itemCount: _items.length,
       ),

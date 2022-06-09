@@ -1,8 +1,10 @@
+import 'package:algolia/algolia.dart';
 import 'package:beamer/beamer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tomato_record/data/user_model.dart';
 import 'package:tomato_record/router/locations.dart';
 import 'package:tomato_record/screens/chat/chat_list_page.dart';
 import 'package:tomato_record/screens/home/items_page.dart';
@@ -22,15 +24,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    UserModel? userModel = context.read<UserNotifier>().userModel;
     return Scaffold(
-      body: IndexedStack(
+      body: (userModel == null)
+      ? Container()
+      : IndexedStack(
         index: _bottomSeletedIndex,
         children: [
-          ItemsPage(),
-          (context.read<UserNotifier>().userModel == null)
-              ? Container()
-              : MapPage(context.read<UserNotifier>().userModel!),
-          ChatListPage(),
+          ItemsPage(userKey: userModel.userKey),
+          MapPage(userModel),
+          ChatListPage(userKey: userModel.userKey),
           Container(
             color: Colors.accents[9],
           ),
@@ -68,9 +71,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 context.beamToNamed("/");
               },
               icon: Icon(CupertinoIcons.nosign)),
-          IconButton(onPressed: () {
-            context.beamToNamed('/$LOCATION_SEARCH');
-          }, icon: Icon(CupertinoIcons.search)),
+          IconButton(
+              onPressed: () {
+                context.beamToNamed('/$LOCATION_SEARCH');
+              },
+              icon: Icon(CupertinoIcons.search)),
           IconButton(onPressed: () {}, icon: Icon(CupertinoIcons.bell))
         ],
       ),

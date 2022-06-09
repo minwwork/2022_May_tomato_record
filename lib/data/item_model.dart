@@ -1,3 +1,4 @@
+import 'package:algolia/algolia.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
@@ -50,6 +51,21 @@ class ItemModel {
     createdDate = json[DOC_CREATEDDATE] == null
         ? DateTime.now().toUtc()
         : (json[DOC_CREATEDDATE] as Timestamp).toDate();
+  }
+
+  ItemModel.fromAlgoliaObject(Map<String, dynamic> json, this.itemKey) {
+    userKey = json[DOC_USERKEY] ?? "";
+    itemDownloadUrls = json[DOC_ITEMDOWNLOADURLS] != null
+        ? json[DOC_ITEMDOWNLOADURLS].cast<String>()
+        : [];
+    title = json[DOC_TITLE] ?? "";
+    category = json[DOC_CATEGORY] ?? "none";
+    price = json[DOC_PRICE] ?? 0;
+    negotiable = json[DOC_NEGOTIABLE] ?? false;
+    detail = json[DOC_DETAIL] ?? "";
+    address = json[DOC_ADDRESS] ?? "";
+    geoFirePoint = GeoFirePoint(0, 0);
+    createdDate = DateTime.now().toUtc();
   }
 
   ItemModel.fromQuerySnapshot(

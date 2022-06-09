@@ -13,6 +13,7 @@ import 'package:tomato_record/screens/item/similar_item.dart';
 import 'package:tomato_record/states/category_notifier.dart';
 import 'package:tomato_record/states/user_notifier.dart';
 import 'package:provider/provider.dart';
+import 'package:tomato_record/utils/logger.dart';
 import 'package:tomato_record/utils/time_calculation.dart';
 
 class ItemDetailScreen extends StatefulWidget {
@@ -88,7 +89,14 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
 
     await ChatService().createNewChatroom(_chatroomModel);
 
-    context.beamToNamed('/$LOCATION_ITEM/${widget.itemKey}/:$chatroomKey');
+    BeamState beamState = Beamer.of(context).currentConfiguration!;
+    String currentPath = beamState.uri.toString();
+    String newPath = (currentPath == '/')
+        ? '/$chatroomKey'
+        : '$currentPath/:$chatroomKey';
+
+    logger.d('newPath - $newPath');
+    context.beamToNamed(newPath);
 
   }
 

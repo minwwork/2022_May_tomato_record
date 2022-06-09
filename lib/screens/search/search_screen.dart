@@ -1,4 +1,12 @@
+import 'package:beamer/beamer.dart';
+import 'package:extended_image/extended_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:tomato_record/constants/common_size.dart';
+import 'package:tomato_record/data/item_model.dart';
+import 'package:tomato_record/repo/algolia_service.dart';
+import 'package:tomato_record/router/locations.dart';
+import 'package:tomato_record/widgets/item_list_widget.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -8,10 +16,15 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-
   static final borderStyle = OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),
       borderSide: BorderSide(color: Colors.grey[200]!));
+
+  final TextEditingController _textEditingController = TextEditingController();
+
+  final List<ItemModel> items = [];
+
+  bool isProcessing = false;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +36,23 @@ class _SearchScreenState extends State<SearchScreen> {
           child: Container(
             child: Center(
               child: TextFormField(
+                autofocus: true,
+                controller: _textEditingController,
+                onFieldSubmitted: (value) async {
+                  isProcessing = true;
+                  setState((){
+
+                  });
+                  List<ItemModel> newItems =
+                      await AlgoliaService().queryItems(value);
+                  if (newItems.isNotEmpty) {
+                    items.clear();
+                    items.addAll(newItems);
+                  }
+                  print('${items.toString()}');
+                  isProcessing = false;
+                  setState(() {});
+                },
                 decoration: InputDecoration(
                     isDense: true,
                     fillColor: Colors.grey[200],
@@ -30,21 +60,38 @@ class _SearchScreenState extends State<SearchScreen> {
                         EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                     filled: true,
                     hintText: '아이템 검색',
-                    border: borderStyle,
+                    enabledBorder: borderStyle,
                     focusedBorder: borderStyle),
               ),
             ),
           ),
         ),
       ),
-      body: ListView.separated(
-          itemBuilder: (context, index) {
-            return ListTile();
-          },
-          separatorBuilder: (context, index) {
-            return Container();
-          },
-          itemCount: 30),
+      body: Stack(
+        children: [
+          if(isProcessing)
+            LinearProgressIndicator(
+              minHeight: 2,
+            ),
+          ListView.separated(
+              padding: EdgeInsets.all(common_padding),
+              itemBuilder: (context, index) {
+                ItemModel item = items[index];
+                Size size = MediaQuery.of(context).size;
+                return ItemListWidget(item, imgSize:size.width/4);
+              },
+              separatorBuilder: (context, index) {
+                return Divider(
+                  height: common_padding * 2 + 1,
+                  thickness: 1,
+                  color: Colors.grey[200],
+                  indent: common_sm_padding,
+                  endIndent: common_sm_padding,
+                );
+              },
+              itemCount: items.length),
+        ],
+      ),
     );
   }
 }
