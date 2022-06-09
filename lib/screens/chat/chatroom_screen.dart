@@ -1,7 +1,10 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:tomato_record/data/chat_model.dart';
+import 'package:tomato_record/data/chatroom_model.dart';
 import 'package:tomato_record/data/user_model.dart';
 import 'package:tomato_record/repo/chat_service.dart';
 import 'package:tomato_record/screens/chat/chat.dart';
@@ -73,6 +76,7 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
   }
 
   MaterialBanner _buildItemInfo(BuildContext context) {
+    ChatroomModel? chatroomModel = context.read<ChatNotifier>().chatroomModel;
     return MaterialBanner(
       padding: EdgeInsets.zero,
       leadingPadding: EdgeInsets.zero,
@@ -84,13 +88,23 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 16.0, right: 12, top: 12, bottom: 12),
-                child: ExtendedImage.network(
-                  'https://picsum.photos/50',
-                  fit: BoxFit.cover,
-                  width: 32,
-                  height: 32,
-                ),
+                padding: const EdgeInsets.only(
+                    left: 16.0, right: 12, top: 12, bottom: 12),
+                child: chatroomModel == null
+                    ? Shimmer.fromColors(
+                        highlightColor: Colors.grey[300]!,
+                        baseColor: Colors.grey,
+                        child: Container(
+                          width: 32,
+                          height: 32,
+                        ),
+                      )
+                    : ExtendedImage.network(
+                        chatroomModel.itemImage,
+                        fit: BoxFit.cover,
+                        width: 32,
+                        height: 32,
+                      ),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,13 +115,18 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
                         style: Theme.of(context).textTheme.bodyText1,
                         children: [
                           TextSpan(
-                              text: ' 이케아 소르테라 분리수거함 5개',
+                              text: chatroomModel == null
+                                  ? ""
+                                  : chatroomModel.itemTitle,
                               style: Theme.of(context).textTheme.bodyText2)
                         ]),
                   ),
                   RichText(
                     text: TextSpan(
-                        text: '30,000원',
+                        text: chatroomModel == null
+                            ? ""
+                            : chatroomModel.itemPrice.toCurrencyString(
+                                mantissaLength: 0, trailingSymbol: '원'),
                         style: Theme.of(context).textTheme.bodyText1,
                         children: [
                           TextSpan(
