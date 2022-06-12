@@ -29,7 +29,8 @@ class SimilarItem extends StatelessWidget {
                 fit: BoxFit.cover,
                 borderRadius: BorderRadius.circular(8),
                 shape: BoxShape.rectangle,
-              )),
+              ),
+          ),
           Text(
             _itemModel.title,
             overflow: TextOverflow.ellipsis,
@@ -42,7 +43,7 @@ class SimilarItem extends StatelessWidget {
               '${_itemModel.price.toString()}원',
               style: Theme.of(context).textTheme.subtitle2,
             ),
-          ),
+          )
         ],
       ),
     );

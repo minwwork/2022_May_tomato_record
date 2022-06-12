@@ -20,7 +20,7 @@ class InputScreen extends StatefulWidget {
   const InputScreen({Key? key}) : super(key: key);
 
   @override
-  State<InputScreen> createState() => _InputScreenState();
+  _InputScreenState createState() => _InputScreenState();
 }
 
 class _InputScreenState extends State<InputScreen> {
@@ -188,9 +188,15 @@ class _InputScreenState extends State<InputScreen> {
                             prefixIconConstraints: BoxConstraints(maxWidth: 20),
                             contentPadding: EdgeInsets.symmetric(
                                 vertical: common_sm_padding),
-                            border: _border,
-                            focusedBorder: _border,
-                            enabledBorder: _border),
+                            border: UnderlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.transparent)),
+                            focusedBorder: UnderlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.transparent)),
+                            enabledBorder: UnderlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.transparent))),
                       ),
                     )),
                     TextButton.icon(

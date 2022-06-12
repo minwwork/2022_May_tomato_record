@@ -9,6 +9,7 @@ const DOC_USERKEY = "userKey";
 const DOC_PHONENUMBER = "phoneNumber";
 const DOC_ADDRESS = "address";
 const DOC_GEOFIREPOINT = "geoFirePoint";
+const DOC_GEOPOINT = "geopoint";
 const DOC_CREATEDDATE = "createDate";
 const DOC_ITEMKEY = "itemKey";
 const DOC_ITEMDOWNLOADURLS = "itemDownloadUrls";

@@ -8,7 +8,6 @@ class Chat extends StatelessWidget {
   final Size size;
   final bool isMine;
   final ChatModel chatModel;
-
   const Chat(
       {Key? key,
       required this.size,
@@ -46,13 +45,14 @@ class Chat extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodyText1!),
               padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               constraints:
-                  BoxConstraints(minHeight: 40, maxWidth: size.width * 0.6),
+                  BoxConstraints(minHeight: 40, maxWidth: size.width * 0.5),
               decoration: BoxDecoration(
                   color: Colors.grey[300],
                   borderRadius: BorderRadius.only(
                       topRight: roundedCorner,
                       topLeft: Radius.circular(2),
-                      bottomRight: roundedCorner)),
+                      bottomRight: roundedCorner,
+                      bottomLeft: roundedCorner)),
             ),
             SizedBox(
               width: 6,
@@ -81,13 +81,14 @@ class Chat extends StatelessWidget {
                   .copyWith(color: Colors.white)),
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           constraints:
-              BoxConstraints(minHeight: 40, maxWidth: size.width * 0.5),
+              BoxConstraints(minHeight: 40, maxWidth: size.width * 0.6),
           decoration: BoxDecoration(
               color: Colors.red,
               borderRadius: BorderRadius.only(
                   topLeft: roundedCorner,
                   topRight: Radius.circular(2),
-                  bottomRight: roundedCorner)),
+                  bottomRight: roundedCorner,
+                  bottomLeft: roundedCorner)),
         ),
       ],
     );

@@ -21,8 +21,8 @@ class UserModel{
   UserModel.fromJson(Map<String, dynamic> json, this.userKey, this.reference)
     : phoneNumber = json[DOC_PHONENUMBER],
     address = json[DOC_ADDRESS],
-    geoFirePoint = GeoFirePoint((json[DOC_GEOFIREPOINT]['geopoint']).latitude,
-        (json[DOC_GEOFIREPOINT]['geopoint']).longitude),
+    geoFirePoint = GeoFirePoint((json[DOC_GEOFIREPOINT][DOC_GEOPOINT]).latitude,
+        (json[DOC_GEOFIREPOINT][DOC_GEOPOINT]).longitude),
     createdDate = json[DOC_CREATEDDATE] == null
         ? DateTime.now().toUtc()
         : (json[DOC_CREATEDDATE] as Timestamp).toDate();
@@ -32,7 +32,7 @@ class UserModel{
       : this.fromJson(snapshot.data()!, snapshot.id, snapshot.reference);
 
     Map<String, dynamic> toJson() {
-      final map = <String, dynamic>{};
+      var map = <String, dynamic>{};
       map[DOC_PHONENUMBER] = phoneNumber;
       map[DOC_ADDRESS] = address;
       map[DOC_GEOFIREPOINT] = geoFirePoint.data;

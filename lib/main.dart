@@ -36,7 +36,7 @@ void main() {
 
 class MyApp extends StatefulWidget {
   @override
-  State<MyApp> createState() => _MyAppState();
+  _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
@@ -92,13 +92,13 @@ class TomatoApp extends StatelessWidget {
                   fontSize: 12,
                   fontWeight: FontWeight.w100),
             ),
-            inputDecorationTheme: InputDecorationTheme(),
             textButtonTheme: TextButtonThemeData(
                 style: TextButton.styleFrom(
                     backgroundColor: Colors.red,
                     primary: Colors.white,
                     minimumSize: Size(48, 48))),
             appBarTheme: AppBarTheme(
+                backwardsCompatibility: false,
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black87,
                 elevation: 2,

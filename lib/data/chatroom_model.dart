@@ -64,8 +64,8 @@ class ChatroomModel {
     buyerImage = json[DOC_BUYERIMAGE]??"";
     geoFirePoint = json[DOC_GEOFIREPOINT] == null
         ? GeoFirePoint(0, 0)
-        : GeoFirePoint((json[DOC_GEOFIREPOINT]['geopoint']).latitude,
-        (json[DOC_GEOFIREPOINT]['geopoint']).longitude);
+        : GeoFirePoint((json[DOC_GEOFIREPOINT][DOC_GEOPOINT]).latitude,
+        (json[DOC_GEOFIREPOINT][DOC_GEOPOINT]).longitude);
     lastMsg = json[DOC_LASTMSG]??"";
     lastMsgTime = json[DOC_LASTMSGTIME] == null
         ? DateTime.now().toUtc()
@@ -75,7 +75,7 @@ class ChatroomModel {
   }
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    var map = <String, dynamic>{};
     map[DOC_ITEMIMAGE] = itemImage;
     map[DOC_ITEMTITLE] = itemTitle;
     map[DOC_ITEMKEY] = itemKey;

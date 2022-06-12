@@ -40,9 +40,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 controller: _textEditingController,
                 onFieldSubmitted: (value) async {
                   isProcessing = true;
-                  setState((){
-
-                  });
+                  setState(() {});
                   List<ItemModel> newItems =
                       await AlgoliaService().queryItems(value);
                   if (newItems.isNotEmpty) {

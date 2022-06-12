@@ -46,8 +46,8 @@ class ItemModel {
     address = json[DOC_ADDRESS] ?? "";
     geoFirePoint = json[DOC_GEOFIREPOINT] == null
         ? GeoFirePoint(0, 0)
-        : GeoFirePoint((json[DOC_GEOFIREPOINT]['geopoint']).latitude,
-            (json[DOC_GEOFIREPOINT]['geopoint']).longitude);
+        : GeoFirePoint((json[DOC_GEOFIREPOINT][DOC_GEOPOINT]).latitude,
+            (json[DOC_GEOFIREPOINT][DOC_GEOPOINT]).longitude);
     createdDate = json[DOC_CREATEDDATE] == null
         ? DateTime.now().toUtc()
         : (json[DOC_CREATEDDATE] as Timestamp).toDate();
@@ -76,7 +76,7 @@ class ItemModel {
       : this.fromJson(snapshot.data()!, snapshot.id, snapshot.reference);
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    var map = <String, dynamic>{};
     map[DOC_USERKEY] = userKey;
     map[DOC_ITEMDOWNLOADURLS] = itemDownloadUrls;
     map[DOC_TITLE] = title;
@@ -91,7 +91,7 @@ class ItemModel {
   }
 
   Map<String, dynamic> toMinJson() {
-    final map = <String, dynamic>{};
+    var map = <String, dynamic>{};
     map[DOC_ITEMDOWNLOADURLS] = itemDownloadUrls.sublist(0, 1);
     map[DOC_TITLE] = title;
     map[DOC_PRICE] = price;

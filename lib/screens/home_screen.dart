@@ -16,7 +16,7 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -27,18 +27,18 @@ class _HomeScreenState extends State<HomeScreen> {
     UserModel? userModel = context.read<UserNotifier>().userModel;
     return Scaffold(
       body: (userModel == null)
-      ? Container()
-      : IndexedStack(
-        index: _bottomSeletedIndex,
-        children: [
-          ItemsPage(userKey: userModel.userKey),
-          MapPage(userModel),
-          ChatListPage(userKey: userModel.userKey),
-          Container(
-            color: Colors.accents[9],
-          ),
-        ],
-      ),
+          ? Container()
+          : IndexedStack(
+              index: _bottomSeletedIndex,
+              children: [
+                ItemsPage(userKey: userModel.userKey),
+                MapPage(userModel),
+                ChatListPage(userKey: userModel.userKey),
+                Container(
+                  color: Colors.accents[9],
+                ),
+              ],
+            ),
       floatingActionButton: ExpandableFab(
         distance: 90,
         children: [

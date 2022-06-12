@@ -17,7 +17,7 @@ class ChatroomScreen extends StatefulWidget {
   const ChatroomScreen({Key? key, required this.chatroomKey}) : super(key: key);
 
   @override
-  State<ChatroomScreen> createState() => _ChatroomScreenState();
+  _ChatroomScreenState createState() => _ChatroomScreenState();
 }
 
 class _ChatroomScreenState extends State<ChatroomScreen> {
@@ -25,7 +25,7 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
   late ChatNotifier _chatNotifier;
 
   @override
-  void ininState() {
+  void initState() {
     _chatNotifier = ChatNotifier(widget.chatroomKey);
     super.initState();
   }
@@ -53,7 +53,7 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
                         padding: EdgeInsets.all(16),
                         itemBuilder: (context, index) {
                           bool isMine = chatNotifier.chatList[index].userKey ==
-                              userModel!.userKey;
+                              userModel.userKey;
                           return Chat(
                             size: _size,
                             isMine: isMine,
@@ -97,6 +97,7 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
                         child: Container(
                           width: 32,
                           height: 32,
+                          color: Colors.white
                         ),
                       )
                     : ExtendedImage.network(
@@ -168,9 +169,6 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
               ),
             ),
           ),
-          SizedBox(
-            height: 12,
-          )
         ],
       ),
     );
@@ -215,15 +213,11 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
                     userKey: userModel.userKey,
                     msg: _textEditingController.text,
                     createdDate: DateTime.now());
-
-                await ChatService()
-                    .createNewChat(widget.chatroomKey, chatModel);
                 _chatNotifier.addNewChat(chatModel);
                 print('${_textEditingController.text}');
-
                 _textEditingController.clear();
               },
-              icon: Icon(Icons.send, color: Colors.grey))
+              icon: Icon(Icons.send, color: Colors.grey)),
         ],
       ),
     );

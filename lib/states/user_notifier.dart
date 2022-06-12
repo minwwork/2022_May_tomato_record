@@ -24,7 +24,7 @@ class UserNotifier extends ChangeNotifier{
 
   Future _setNewUser(User? user) async {
     _user = user;
-    if(user! == null && user.phoneNumber != null) {
+    if(user != null && user.phoneNumber != null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String address = prefs.getString(SHARED_ADDRESS) ?? "";
       double lat = prefs.getDouble(SHARED_LAT) ?? 0;
@@ -41,7 +41,7 @@ class UserNotifier extends ChangeNotifier{
 
       await UserService().createNewUser(userModel.toJson(), userKey);
       _userModel = await UserService().getUserModel(userKey);
-      logger.d(userModel!.toJson().toString());
+      logger.d(_userModel!.toJson().toString());
     }
   }
 

@@ -18,7 +18,6 @@ import 'package:tomato_record/utils/time_calculation.dart';
 
 class ItemDetailScreen extends StatefulWidget {
   final String itemKey;
-
   const ItemDetailScreen(this.itemKey, {Key? key}) : super(key: key);
 
   @override
@@ -93,7 +92,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
     String currentPath = beamState.uri.toString();
     String newPath = (currentPath == '/')
         ? '/$chatroomKey'
-        : '$currentPath/:$chatroomKey';
+        : '$currentPath/$chatroomKey';
 
     logger.d('newPath - $newPath');
     context.beamToNamed(newPath);
@@ -103,7 +102,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<ItemModel>(
-      future: ItemService().getItemModel(widget.itemKey),
+      future: ItemService().getItem(widget.itemKey),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           ItemModel itemModel = snapshot.data!;
@@ -111,7 +110,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
               .read<UserNotifier>()
               .userModel!;
           return LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
+            builder: (context, constraints) {
               _size = MediaQuery
                   .of(context)
                   .size;
@@ -144,9 +143,6 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                 width: common_sm_padding * 2 + 1,
                                 indent: common_sm_padding,
                                 endIndent: common_sm_padding,
-                              ),
-                              SizedBox(
-                                width: common_sm_padding,
                               ),
                               Column(
                                 mainAxisAlignment:
@@ -252,7 +248,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                     child: Align(
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                          '이 게시글 신고하기'), //flutter_email_sender 5.1.0 활용가능
+                                          '이 게시글 신고하기') //flutter_email_sender 5.1.0 활용가능
                                     )),
                                 Divider(
                                   height: 2,
@@ -269,7 +265,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  '무무님의 판매상품',
+                                  '${userModel.phoneNumber.substring(9)}님의 판매상품',
                                   style: Theme
                                       .of(context)
                                       .textTheme
@@ -292,7 +288,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                       ),
                                     ),
                                   ),
-                                ),
+                                )
                               ],
                             ),
                           ),
@@ -372,8 +368,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
           );
         }
         return Container();
-      },
-    );
+      });
   }
 
   SliverAppBar _imagesAppBar(ItemModel itemModel) {
@@ -397,7 +392,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
         background: PageView.builder(
           controller: _pageController,
           allowImplicitScrolling: true,
-          itemBuilder: (BuildContext context, int index) {
+          itemBuilder: (context, index) {
             return ExtendedImage.network(
               itemModel.itemDownloadUrls[index],
               fit: BoxFit.cover,

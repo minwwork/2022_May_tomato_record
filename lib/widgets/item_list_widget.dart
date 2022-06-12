@@ -24,8 +24,8 @@ class ItemListWidget extends StatelessWidget {
         BeamState beamState = Beamer.of(context).currentConfiguration!;
         String currentPath = beamState.uri.toString();
         String newPath = (currentPath == '/')
-            ? '/$LOCATION_ITEM/:${item.itemKey}'
-            : '$currentPath/:${item.itemKey}';
+            ? '/$LOCATION_ITEM/${item.itemKey}'
+            : '$currentPath/${item.itemKey}';
 
         logger.d('newPath - $newPath');
         context.beamToNamed(newPath);

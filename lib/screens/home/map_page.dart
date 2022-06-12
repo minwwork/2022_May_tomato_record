@@ -40,7 +40,7 @@ class _MapPageState extends State<MapPage> {
     setState(() {});
   }
 
-  Widget _buildMarkerwidget(Offset offset, {Color color = Colors.red}) {
+  Widget _buildMarkerWidget(Offset offset, {Color color = Colors.red}) {
     return Positioned(
         left: offset.dx,
         top: offset.dy,
@@ -87,17 +87,17 @@ class _MapPageState extends State<MapPage> {
             widget._userModel.geoFirePoint.latitude,
             widget._userModel.geoFirePoint.longitude));
 
-        final myLocationWidget = _buildMarkerwidget(myLocationOnMap);
+        final myLocationWidget = _buildMarkerWidget(myLocationOnMap, color: Colors.black);
 
         Size size = MediaQuery.of(context).size;
         final middleOnScreen = Offset(size.width / 2, size.height / 2);
 
-        final latlngOnMap = transformer.fromXYCoordsToLatLng(middleOnScreen);
-        print("${latlngOnMap.latitude}, ${latlngOnMap.longitude}");
+        final latLngOnMap = transformer.fromXYCoordsToLatLng(middleOnScreen);
+        print("${latLngOnMap.latitude}, ${latLngOnMap.longitude}");
 
         return FutureBuilder<List<ItemModel>>(
             future: ItemService()
-                .getNearByItems(widget._userModel.userKey, latlngOnMap),
+                .getNearByItems(widget._userModel.userKey, latLngOnMap),
             builder: (context, snapshot) {
               List<Widget> nearByItems = [];
 

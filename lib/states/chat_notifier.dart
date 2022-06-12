@@ -23,7 +23,7 @@ class ChatNotifier extends ChangeNotifier {
         ChatService()
             .getLatestChats(_chatroomKey, _chatList[0].reference!)
             .then((latestChat) {
-          _chatList.insertAll(0, latestChat);
+          this._chatList.insertAll(0, latestChat);
           notifyListeners();
         });
       }

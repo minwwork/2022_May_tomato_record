@@ -5,9 +5,9 @@ import 'package:tomato_record/utils/logger.dart';
 
 class UserService {
 
-  static final UserService _userService = UserService.internal();
+  static final UserService _userService = UserService._internal();
   factory UserService() => _userService;
-  UserService.internal();
+  UserService._internal();
 
   Future createNewUser(Map<String, dynamic> json, String userKey) async {
     DocumentReference<Map<String, dynamic>> documentReference =

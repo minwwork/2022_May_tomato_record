@@ -7,11 +7,11 @@ const Algolia algolia = Algolia.init(
 );
 
 class AlgoliaService {
-  static final AlgoliaService _algoliaService = AlgoliaService.internal();
+  static final AlgoliaService _algoliaService = AlgoliaService._internal();
 
   factory AlgoliaService() => _algoliaService;
 
-  AlgoliaService.internal();
+  AlgoliaService._internal();
 
 
   Future<List<ItemModel>> queryItems(String queryStr) async {

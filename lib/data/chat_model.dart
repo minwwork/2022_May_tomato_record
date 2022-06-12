@@ -8,7 +8,7 @@ import 'package:tomato_record/constants/data_keys.dart';
 /// reference : ""
 
 class ChatModel {
-  late String chatKey;
+  String? chatKey;
   late String msg;
   late DateTime createdDate;
   late String userKey;
@@ -30,7 +30,7 @@ class ChatModel {
   }
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    var map = <String, dynamic>{};
     map[DOC_MSG] = msg;
     map[DOC_CREATEDDATE] = createdDate;
     map[DOC_USERKEY] = userKey;
@@ -44,7 +44,4 @@ class ChatModel {
   ChatModel.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : this.fromJson(snapshot.data()!, snapshot.id, snapshot.reference);
 
-  static String generateChatRoomKey(String buyer, String itemKey) {
-    return '${itemKey}_$buyer';
-  }
 }

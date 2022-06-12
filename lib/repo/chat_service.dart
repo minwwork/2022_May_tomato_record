@@ -6,11 +6,11 @@ import 'package:tomato_record/data/chat_model.dart';
 import 'package:tomato_record/data/chatroom_model.dart';
 
 class ChatService {
-  static final ChatService _itemService = ChatService.internal();
+  static final ChatService _itemService = ChatService._internal();
 
   factory ChatService() => _itemService;
 
-  ChatService.internal();
+  ChatService._internal();
 
   //todo:create new chatroom
   Future createNewChatroom(ChatroomModel chatroomModel) async {
@@ -20,7 +20,7 @@ class ChatService {
                 chatroomModel.buyerKey, chatroomModel.itemKey));
     final DocumentSnapshot documentSnapshot = await documentReference.get();
 
-    if (documentSnapshot.exists) {
+    if (!documentSnapshot.exists) {
       await documentReference.set(chatroomModel.toJson());
     }
   }

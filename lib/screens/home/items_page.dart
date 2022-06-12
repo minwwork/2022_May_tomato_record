@@ -1,13 +1,9 @@
-import 'package:beamer/beamer.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tomato_record/constants/common_size.dart';
 import 'package:tomato_record/data/item_model.dart';
 import 'package:tomato_record/repo/item_service.dart';
-import 'package:tomato_record/repo/user_service.dart';
-import 'package:tomato_record/router/locations.dart';
 import 'package:tomato_record/widgets/item_list_widget.dart';
 
 class ItemsPage extends StatefulWidget {
@@ -19,29 +15,28 @@ class ItemsPage extends StatefulWidget {
 }
 
 class _ItemsPageState extends State<ItemsPage> {
-  final List<ItemModel> _items = [];
-
   bool init = false;
+  List<ItemModel> items = [];
 
   @override
   void initState() {
     if(!init) {
       _onRefresh();
-      super.initState();
       init = true;
     }
+      super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder: (context, contraints) {
+      builder: (context, constraints) {
         Size size = MediaQuery.of(context).size;
         final imgSize = size.width / 4;
 
         return AnimatedSwitcher(
             duration: Duration(milliseconds: 300),
-            child: (_items.isNotEmpty)
+            child: (items.isNotEmpty)
                 ? _listView(imgSize)
                 : _shimmerListView(imgSize));
         // return _listView(imgSize);
@@ -50,8 +45,8 @@ class _ItemsPageState extends State<ItemsPage> {
   }
 
   Future _onRefresh() async {
-    _items.clear();
-    _items.addAll(await ItemService().getItems());
+    items.clear();
+    items.addAll(await ItemService().getItems(widget.userKey));
     setState(() {});
   }
 
@@ -70,10 +65,10 @@ class _ItemsPageState extends State<ItemsPage> {
           );
         },
         itemBuilder: (context, index) {
-          ItemModel item = _items[index];
+          ItemModel item = items[index];
           return ItemListWidget(item, imgSize:imgSize);
         },
-        itemCount: _items.length,
+        itemCount: items.length,
       ),
     );
   }
@@ -167,6 +162,7 @@ class _ItemsPageState extends State<ItemsPage> {
             );
           },
           itemCount: 10,
-        ));
+        ),
+    );
   }
 }
